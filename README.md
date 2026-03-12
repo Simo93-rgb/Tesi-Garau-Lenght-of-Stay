@@ -83,7 +83,7 @@ Quest'opera è distribuita con licenza **Creative Commons Attribution 4.0 Intern
 - Riassunto leggibile (deed): https://creativecommons.org/licenses/by/4.0/
 
 **Esempio di attribuzione consigliata:**
-> Filiberto Melis, "Forecasting di Consumi Energetici nel Mercato Elettrico Italiano: un Confronto tra Modelli di Machine Learning e Deep Learning", Anno Accademico 2024/2025, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+> Simone Garau, "Forecasting di Consumi Energetici nel Mercato Elettrico Italiano: un Confronto tra Modelli di Machine Learning e Deep Learning", Anno Accademico 2024/2025, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
 
 ## Contatti
 
