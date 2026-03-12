@@ -1,7 +1,80 @@
 \documentclass[12pt, a4paper, twoside]{book}
+ 
+% --- Configurazione Intestazioni e Piè di pagina ---
 
-% --- Lingua e Codifica ---
+\usepackage{fancyhdr}
+
+% Imposta lo stile di pagina 'fancy' come predefinito
+
+\pagestyle{fancy}
+
+% 1. Pulisce completamente intestazioni e piè di pagina
+
+\fancyhf{} 
+
+% 2. Imposta il numero di pagina nel piè di pagina (footer),
+
+%    nell'angolo esterno (LE = Left Even, RO = Right Odd)
+
+\fancyfoot[LE,RO]{\thepage} 
+
+% 3. Assicura che non ci siano linee (né in alto né in basso)
+
+\renewcommand{\headrulewidth}{0pt}
+
+\renewcommand{\footrulewidth}{0pt}
+
+% 4. Ridefinisce lo stile 'plain' (usato per l'inizio dei capitoli)
+
+%    per farlo comportare esattamente come lo stile 'fancy'
+
+\fancypagestyle{plain}{%
+
+    \fancyhf{} % Pulisce
+
+    \fancyfoot[LE,RO]{\thepage} % Imposta il numero
+
+    \renewcommand{\headrulewidth}{0pt}
+
+    \renewcommand{\footrulewidth}{0pt}
+
+}
+
+\usepackage{titlesec}
+
+% Formatta il comando \chapter
+\titleformat{\chapter}[hang]%
+  {\normalfont\Huge\bfseries}% Formato: Normale, Gigante, Grassetto
+  {\thechapter.}%
+  {1em}% Separazione tra numero e titolo
+  {}% Codice da eseguire prima del titolo
+ 
+% Opzionale: regola lo spazio sopra e sotto il titolo
+\titlespacing*{\chapter}%
+  {0pt}% Spazio a sinistra
+  {50pt}% Spazio SOPRA il titolo (default è 50pt)
+  {40pt}% Spazio SOTTO il titolo (default è 40pt)
+ 
+% Informazioni per il frontespizio
+
+\title{Tesi Intelligenza Artificiale}
+
+\author{Simone Garau}
+
+\date{Aprile 2026}
+ 
+% Pacchetto per l'inserimento delle immagini
+
+\usepackage{graphicx}
+ 
+% Pacchetto per la gestione delle pagine vuote
+
+\usepackage{emptypage}
+ 
+% Pacchetti per la lingua italiana e la codifica
+
 \usepackage[italian]{babel}
+
 \usepackage{iftex}
 
 \ifPDFTeX
@@ -10,148 +83,171 @@
   \usepackage[utf8]{inputenc}
   \usepackage{lmodern}
 \else
-  % Per compilazione XeLaTeX o LuaLaTeX (Consigliato su Overleaf)
+  % Per compilazione XeLaTeX o LuaLaTeX
   \usepackage{fontspec}
+
   \usepackage{unicode-math}
+
+  % Font disponibili su Debian (usa DejaVu o Latin Modern)
   \setmainfont{DejaVu Serif}
   \setsansfont{DejaVu Sans}
   \setmonofont{DejaVu Sans Mono}
   \setmathfont{Latin Modern Math}
 \fi
-
-% --- Geometria e Layout ---
+ 
+% Pacchetto per i margini 
 \usepackage[
   a4paper,
   twoside,
-  inner=3.5cm,
-  outer=2.5cm,
+  inner=2.5cm,  % Margine interno
+  outer=2.5cm,  % Margine esterno
   top=2.5cm,
   bottom=2.5cm
+  % showframe  % Per vedere i margini
 ]{geometry}
+ 
+% Pacchetto per l'interlinea
 
 \usepackage{setspace}
-\usepackage{emptypage}
+ 
+% Pacchetto per la bibliografia
 
-% --- Grafica e Tabelle ---
-\usepackage{graphicx}
-\usepackage{caption}
-\captionsetup{font={small, it}}
-
-% --- Matematica ---
-\usepackage{amsmath}
-\usepackage{amssymb}
-
-% --- Configurazione Intestazioni e Piè di pagina ---
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{} 
-\fancyfoot[LE,RO]{\thepage} 
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
-
-% Ridefinisce lo stile 'plain' (per le pagine d'inizio capitolo)
-\fancypagestyle{plain}{%
-    \fancyhf{}
-    \fancyfoot[LE,RO]{\thepage}
-    \renewcommand{\headrulewidth}{0pt}
-    \renewcommand{\footrulewidth}{0pt}
-}
-
-% --- Formattazione Titoli ---
-\usepackage{titlesec}
-\titleformat{\chapter}[hang]%
-  {\normalfont\Huge\bfseries}% 
-  {\thechapter.}%
-  {1em}% 
-  {}% 
-
-\titlespacing*{\chapter}{0pt}{50pt}{40pt}
-
-% --- Bibliografia ---
 \usepackage[numbers]{natbib}
+ 
+% Paccehtto per le formule matematiche
 
-% --- Link ipertestuali (Caricare per ultimo) ---
+\usepackage{amsmath}
+ 
+% Pacchetto per le caption delle immagini
+
+\usepackage{caption}
+
+\captionsetup{font={small, it}}
+ 
+% Pacchetto per i link 
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
-    citecolor=blue,
     filecolor=magenta,      
     urlcolor=cyan,
-    pdftitle={Tesi Intelligenza Artificiale - Simone Garau},
+    pdftitle={Tesi Intelligenza Artificiale},
     pdfauthor={Simone Garau},
 }
-
-% --- Documento ---
+ 
+ 
 \begin{document}
-
-% --- Frontespizio ---
+ 
 \frontmatter
 
-\begin{titlepage}
+\begin{titlepage} % INIZIO FRONTESPIZIO
+
+\centering
+ 
+% Logo
+
+\includegraphics[width=10cm]{img/logo_upo.jpg} 
+
+\vspace{1.5cm}
+ 
+% 2. Info Università e Dipartimento
+
+\vspace{0.5cm}
+
+{\large Dipartimento di Scienze e Innovazione Tecnologica\par}
+
+\vspace{0.5cm}
+
+{\large \bfseries Corso di Laurea Magistrale in Intelligenza Artificiale e Innovazione Digitale\par}
+
+\vspace{2cm}
+ 
+% Tipo di Tesi
+
+{\Large Tesi di Laurea Magistrale\par} 
+
+\vfill
+ 
+% Titolo della Tesi
+
+{\huge\bfseries embedding and XAI\par}
+
+\vspace{0.5cm}
+
+{\Large embedding su BERT\par}
+
+\vfill
+ 
+% Relatore e Candidato
+
+\begin{minipage}[t]{0.45\textwidth}
+
     \centering
-    % Assicurati che il percorso dell'immagine sia corretto su Overleaf
-    \includegraphics[width=8cm]{img/logo_upo.jpg} 
-    \vspace{1cm}
-    
-    {\large Università degli Studi del Piemonte Orientale \par}
-    {\large Dipartimento di Scienze e Innovazione Tecnologica \par}
-    \vspace{0.5cm}
-    {\large \bfseries Corso di Laurea Magistrale in Intelligenza Artificiale e Innovazione Digitale \par}
-    
-    \vfill
-    {\Large Tesi di Laurea Magistrale \par} 
-    \vspace{1cm}
-    {\huge\bfseries Tesi Garau \par}
-    \vspace{0.5cm}
-    {\Large embedding e XAI \par}
-    \vfill
 
-    \begin{minipage}[t]{0.45\textwidth}
-        \begin{flushleft}
-            {\bfseries Relatore:}\\[0.2cm]
-            Prof. Giorgio Leonardi
-        \end{flushleft}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.45\textwidth}
-        \begin{flushright}
-            {\bfseries Candidato:}\\[0.2cm]
-            Simone Garau
-        \end{flushright}
-    \end{minipage}
+    {\bfseries Relatore\par}
 
-    \vfill
-    {\large Anno Accademico 2024/2025 \par}
-\end{titlepage}
+    Prof.  Giorgio Leonardi
 
+    \vspace{.5cm}
+
+\end{minipage}
+
+\hfill
+
+\begin{minipage}[t]{0.45\textwidth}
+
+    \centering
+
+    {\bfseries Candidato\par}
+
+    \vspace{.5cm}
+
+    Simone Garau 
+
+\end{minipage}
+
+\vfill
+ 
+% Anno Accademico
+
+{\large Anno Accademico 2024/2025\par}
+ 
+\end{titlepage} %  FINE FRONTESPIZIO
+\clearpage
+% Pagina della licenza (includo la dichiarazione CC BY 4.0)
+\input{license.tex}
 \clearpage
 
-\chapter*{Abstract}
+
 \input{abstract.tex}
 
 \tableofcontents
-
-% --- Corpo della Tesi ---
+ 
 \mainmatter
+
 \onehalfspacing
+
 \sloppy
 
+% Capitoli della tesi
 \input{capitoli/01_introduzione.tex}
-% \input{capitoli/02_stato_arte.tex}
-% \input{capitoli/03_metodologia.tex}
+\input{capitoli/02_stato_arte.tex}
+\input{capitoli/03_metodologia.tex}
 
-% --- Appendici, Bibliografia e Ringraziamenti ---
+\input{capitoli/04_risultati.tex}
+\input{capitoli/05_conclusioni.tex}
+
 \backmatter
 
-% Se hai appendici, mettile qui
-\appendix
-\input{appendici.tex}
-
 \bibliographystyle{unsrtnat}
+
 \bibliography{bibliografia} 
 
 \chapter*{Ringraziamenti}
 \input{ringraziamenti.tex}
 
+\appendix
+\input{appendici.tex}
+ 
 \end{document}
+ 

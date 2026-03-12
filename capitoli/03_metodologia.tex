@@ -1,0 +1,43 @@
+% capitoli/03_metodologia.tex - Capitolo 3: Metodologia
+
+\chapter{Metodologia}
+\label{ch:metodologia}
+
+\section{Estrazione e Preprocessing dei Dati}
+Il punto di partenza dell'esperimento è costituito da log ospedalieri estratti in formato XES. L'obiettivo primario di questa fase iniziale è strutturare e formattare tali log non strutturati per renderli digeribili all'architettura neurale sottostante il Transformer. Poiché il task mira ad accoppiare eventi clinici e previsioni temporali del Length of Stay (LOS), è stata condotta una meticolosa opera di data engineering che ha portato alla creazione e al test di tre filosofie distinte di \textit{embedding}:
+
+\begin{enumerate}
+    \item \textbf{Sequenza pura + Distanze numeriche:} La prima forma di preprocessing concatena in serie i codici degli eventi delle tracce cliniche ed assegna a ciascuna transizione un vettore aggiuntivo o un token di distanza cronologica calcolata numericamente. 
+    \item \textbf{Azioni cliniche + Binning Temporale:} Nel secondo approccio, il timing continuo per le durate non è più descritto numericamente con valori grezzi o scalati, ma ridotto in \textit{bins} categorici ed identificato da appositi "token speciali" inseriti tra un'azione e l'altra (es. \texttt{<FAST\_TRANSIT>}, \texttt{<SLOW\_TRANSIT>}).
+    \item \textbf{Storytelling in linguaggio naturale:} L'approccio finale, che costituisce il core metodologico del progetto TEXLOS, si rifà al pionieristico lavoro di traduzione semantica dei log del progetto LEGOLAS \cite{PASQUADIBISCEGLIE2025128224}. Anziché nutrire il classificatore con una combinazione di codici in sequenza e array numerici o label astratte, gli eventi e i vincoli cronologici della traccia sono tradotti letteralmente in frasi inglesi strutturate grammaticalmente, producendo interi paragrafi coerenti narranti il percorso diagnostico/terapeutico di ciascun paziente.
+\end{enumerate}
+
+\section{Architettura del Modello e Limitazioni dei BERT Clinici}
+Alla base del sistema di previsione giace \texttt{bert-base-uncased}, un Large Language Model reso disponibile pubblicamente sulla piattaforma HuggingFace. Questo Transformer, limitato alla componente Encoder, viene sottoposto a Fine Tuning aggiungendo al termine dell'architettura standard una testina (\textit{classification head}) volta a predire la natura binaria del problema: degenza normale (sotto i 20 giorni) contro degenza critica (uguale o superiore a 20 giorni).
+
+Il primo istinto sperimentale è stato chiaramente quello di testare modelli \textit{Domain-Specific}, sfruttando pesi presi in prestito da varianti di BERT pre-addestrate unicamente su colossali corpus di articoli medici o abstract clinici (es. \textit{ClinicalBERT} o \textit{BioBERT}). L'ipotesi sottostante era che un vocabolario clinico più radicato ab initio avrebbe accelerato e migliorato la decodifica delle diagnosi di reparto. L'evidenza empirica ha sorprendentemente sancito una totale assenza di vantaggi prestazionali misurabili rispetto al canonico modello "uncased" generico. Tale anomalia si spiega agevolmente analizzando a posteriori l'altissima specificità terminologica del \textit{nomenclatore locale} del dataset: gran parte degli acronimi, delle contrazioni e dei codici diagnostici ospedalieri risultavano "proprietari" ed eccentrici rispetto al linguaggio formale universale del \textit{PubMed} della letteratura medica con cui i target model nativamente medici erano stati allineati. Lo spazio latente generico del modello uncased classico, molto più resiliente all'unfamiliarità contestuale, si è paradoxalmente affermato come la scelta architetturale più affidabile.
+
+\section{Focal Loss e Sbilanciamento delle Classi}
+Il dataset presenta uno dei paradossi strutturali più frequenti della Process Analytics in sanità: lo \textit{sbilanciamento estremo delle classi}. Di fatto, le casistiche in cui il paziente sfiora o sfora una degenza continua di venti giorni (classe 1 - Critico) costituiscono una netta e fisiologica minoranza anomala nei log degli eventi rispetto alla travolgente maggioranza dei passaggi di routine o dimissioni rapide (classe 0 - Normale).
+
+Un prematuro addestramento gestito dalla standard \textit{Binary Cross Entropy} (BCE) ha rivelato l'incapacità del sistema di apprendere equamente. Il classificatore subiva l'influenza della classe dominante, orientandosi verso un banale \textit{ZeroR} o un'ipersensibilità passiva, penalizzando disastrosamente la sensibilità per i casi avversi rari, esattamente i casi di primario interesse per le amministrazioni ospedaliere tese a limitare le anomalie.
+
+Per sanare l'arresa dell'algoritmo nei confronti dei falsi negativi e ricalibrare i gradienti in via differenziale, è stata adottata in fase di Fine Tuning la funzione di costo denominata \textbf{Focal Loss}. Introdotta originariamente per mitigare squilibri macroscopici nel \textit{Dense Object Detection}, la Focal Loss smorza la priorità (loss contribution) dei target facili e sovrabbondanti in favore dei pazienti mal classificati della classe minoritaria, esonerando dalla necessità di applicare invasive e forzate euristiche distruttive sul dataset a monte (come un aggressivo \textit{undersampling} che distruggerebbe importanti pattern contestuali globali).
+
+\section{Setup Sperimentale e Hyperparameter Tuning}
+L'intera pipeline di esperimenti e addestramento supervisionato è stata materialmente elaborata e portata a convergenza su un setup hardware performante, incentrato su una workstation munita di CPU AMD Ryzen 9 5900X, 64 GB di RAM e GPU NVIDIA GeForce RTX 4090 (consentendo l'aumento efficiente delle batch size e l'addestramento distribuito del grafo tensoriale Transformer).
+
+Per preservare l'integrità e il realismo della diagnostica probabilistica al cospetto dello sbilanciamento delle classi, la valutazione accademica si basa unicamente su iterazioni cicliche di \textit{Stratified K-Fold Cross Validation}. Questo garantisce che ogni singola split prodotta preservi identiche proporzioni di pazienti anomali/ordinari rispetto al database globale, smaltendo bias d'addestramento.
+
+L'impostazione degli iperparametri del modello neurale è sfociata da un processo combinato: 
+\begin{itemize}
+    \item L'esplorazione automatica bayesiana condotta massivamente dal framework \texttt{Optuna}.
+    \item Un minuzioso \textit{tuning manuale} a posteriori. Affinché i risultati non scivolassero in asimmetrie dimensionali non volute, le alterazioni manuali degli intervalli innescati da Optuna si sono preoccupate di preservare costanti le "proporzioni architetturali" auree del transformer, quali i rapporti intrinseci tra hidden layers, attention heads e scaling rate dello stack.
+\end{itemize}
+
+\section{Indagine Esplorativa: Il Fallimento della Data Augmentation con LLM}
+Nel tentativo di robustire l'astrazione di BERT sulla classe minoritaria (long-LOS), si è tentato un originale esperimento di estensione del dataset (\textit{Data Augmentation}) avvalendosi per la prima volta dell'intelligenza generativa degli attuali LLM.
+
+La pipeline esplorativa prevedeva di interrogare localmente modelli allo stato dell'arte come Ollama, \texttt{phi-4} e \texttt{gemma-3}. Impostando volontariamente un paramentro di Temperature molto prossimo allo "zero termico" (per inibire l'allucinazione e imporre determinismo logico), è stato demandato ai modelli di analizzare le varianti pre-codificate di storytelling dei log pazienti rari e "rigenerarne" varianti testuali grammaticalmente dissimili ma clinicamente equivalenti, per espandere artificialmente gli scarsi entry critici.
+
+Nonostante il rigore dell'indagine, i risultati empirici hanno inequivocabilmente sancito il fallimento dell'ipotesi: l'inserimento dello Storytelling sintetico nel fine tuning ha drasticamente degradato le curve ROC. Si ipotizza che impercettibili bias introiettati nello scarto sintattico tra sintesi LLM e pattern ospedalieri genuini compromettano matematicamente la sensibilità discriminatoria spaziale di BERT. A seguito di questa consapevolezza negativa, l'embedding finale è rimasto solidamente ancorato al puro \textit{parsing} scriptato deterministico su log diretti.

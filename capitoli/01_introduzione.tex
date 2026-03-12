@@ -1,0 +1,29 @@
+% capitoli/01_introduzione.tex - Capitolo 1: Introduzione
+
+\chapter{Introduzione}
+\label{ch:introduzione}
+
+\section{Contesto e Motivazione}
+L'ottimizzazione dei processi sanitari rappresenta oggi una delle sfide principali per le amministrazioni ospedaliere, spinte dalla necessità di coniugare la qualità delle cure con la sostenibilità economica delle strutture. In questo contesto, il controllo e la previsione del \textit{Length of Stay} (LOS), ovvero la durata della degenza ospedaliera dei pazienti, rivestono un ruolo cruciale. Un LOS eccessivamente prolungato non solo grava sulle risorse finanziarie e strutturali dell'ospedale, come la disponibilità di posti letto e il carico di lavoro del personale, ma espone anche i pazienti a un maggiore rischio di infezioni nosocomiali e complicazioni cliniche.
+
+Storicamente, l'analisi dei percorsi clinici si è avvalsa del \textit{Process Mining}, una disciplina che consente di estrarre conoscenza preziosa dai log degli eventi registrati dai sistemi informativi sanitari, esplorando e modellando i flussi di cura. Tuttavia, le metodologie classiche di Process Mining mostrano limiti nel gestire la complessità semantica e la sequenzialità non lineare intrinseche alle tracce cliniche dei pazienti, spesso frammentate e altamente variabili.
+
+Negli ultimi anni, l'evoluzione dell'Intelligenza Artificiale ha aperto nuove prospettive, in particolare grazie all'introduzione dei modelli basati sull'architettura Transformer e all'avvento dei Large Language Models (LLM). L'intuizione fondamentale risiede nell'assimilare una sequenza di eventi clinici a una narrazione, traducendo le tracce in veri e propri documenti di testo (\textit{Storytelling}). I modelli linguistici avanzati, come BERT, possiedono infatti la capacità intrinseca di comprendere il contesto bidirezionale di una sequenza temporale, cogliendo dipendenze a lungo termine e sfumature che i modelli statistici tradizionali ignorano. 
+
+Nonostante le elevate prestazioni predittive raggiunte dalle reti neurali profonde, la loro natura di ``scatola nera'' (\textit{black box}) costituisce un ostacolo significativo all'adozione pratica in ambito clinico, dove la fiducia degli operatori sanitari e la trasparenza decisionale sono requisiti imprescindibili. Al medico o all'amministratore ospedaliero non basta sapere \textit{se} un paziente avrà una degenza critica, ma serve comprendere il \textit{perché}, in modo da poter intervenire attivamente sulle inefficienze strutturali o sui colli di bottiglia dei processi. È qui che si inserisce l'Explainable AI (XAI), che si prepone di decostruire le decisioni dell'Intelligenza Artificiale fornendo motivazioni interpretabili per l'uomo.
+
+\section{Obiettivi della Tesi}
+Questa tesi si colloca all'interno del progetto di ricerca TEXLOS (\textit{Investigating the Impact of Outpatient Services on Length of Stay: an Easily Interpretable Approach}) e si pone due obiettivi primari fusi in un'unica pipeline di analisi.
+
+Il primo obiettivo è lo sviluppo di un sistema di classificazione binaria basato sull'architettura Transformer per prevedere in anticipo se la degenza di un paziente supererà una soglia critica, fissata a 20 giorni. Il modello fa leva sull'approccio dello \textit{Storytelling}, trasformando i log in formato XES in narrazioni testuali ed impiegando \texttt{bert-base-uncased} per catturare le connessioni logiche tra i vari eventi clinici.
+
+Il secondo e più innovativo obiettivo riguarda l'interpretabilità del modello predittivo. Attraverso l'uso di tecniche avanzate di Explainable AI, in particolare l'algoritmo degli Integrated Gradients (IG) e le mappe di attenzione, il lavoro mira a estrapolare e quantificare l'impatto di ogni singola azione clinica sulla durata prolungata della degenza. L'obiettivo ultimo è fornire alle amministrazioni ospedaliere uno strumento diagnostico di processo capace di evidenziare in modo chiaro ed inequivocabile i colli di bottiglia, traducendo token sparsi in azioni cliniche leggibili provviste di un punteggio d'impatto rigoroso.
+
+\section{Struttura dell'Elaborato}
+Il presente documento è organizzato come segue:
+\begin{itemize}
+    \item Il \textbf{Capitolo \ref{ch:stato_arte}} esplora lo stato dell'arte, partendo dall'uso del Process Mining in ambito clinico fino all'impiego del Deep Learning e degli LLM per la classificazione di tracce. Particolare attenzione viene posta ai concetti di Explainable AI e all'approccio Storytelling, citando progetti pionieristici come LEGOLAS.
+    \item Il \textbf{Capitolo \ref{ch:metodologia}} descrive in dettaglio i passaggi tecnici del lavoro: dall'estrazione e preprocessing dei dati alla creazione degli embedding, esponendo la configurazione della rete neurale (BERT), la gestione dello sbilanciamento estremo delle classi mediante Focal Loss e il setup sperimentale. Verrà anche discusso un esperimento esplorativo di data augmentation tramite LLM \textit{generativi}.
+    \item Il \textbf{Capitolo \ref{ch:risultati}} riporta i risultati della classificazione in termini di accuratezza e metriche di valutazione. Successivamente, dettaglia criticamente l'implementazione adattativa degli Integrated Gradients e illustra il meccanismo di mappatura dei sub-token, mostrando concretamente come i risultati dell'algoritmo permettono di individuare i colli di bottiglia nel processo clinico.
+    \item Il \textbf{Capitolo \ref{ch:conclusioni}} riassume i traguardi raggiunti dalla tesi, evidenzia i limiti metodologici intrinseci dell'approccio proposto, chiarendo la differenza tra correlazione e causalità, e traccia possibili traiettorie per gli sviluppi futuri.
+\end{itemize}
