@@ -1,0 +1,157 @@
+\documentclass[12pt, a4paper, twoside]{book}
+
+% --- Lingua e Codifica ---
+\usepackage[italian]{babel}
+\usepackage{iftex}
+
+\ifPDFTeX
+  % Per compilazione standard pdfLaTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{lmodern}
+\else
+  % Per compilazione XeLaTeX o LuaLaTeX (Consigliato su Overleaf)
+  \usepackage{fontspec}
+  \usepackage{unicode-math}
+  \setmainfont{DejaVu Serif}
+  \setsansfont{DejaVu Sans}
+  \setmonofont{DejaVu Sans Mono}
+  \setmathfont{Latin Modern Math}
+\fi
+
+% --- Geometria e Layout ---
+\usepackage[
+  a4paper,
+  twoside,
+  inner=3.5cm,
+  outer=2.5cm,
+  top=2.5cm,
+  bottom=2.5cm
+]{geometry}
+
+\usepackage{setspace}
+\usepackage{emptypage}
+
+% --- Grafica e Tabelle ---
+\usepackage{graphicx}
+\usepackage{caption}
+\captionsetup{font={small, it}}
+
+% --- Matematica ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% --- Configurazione Intestazioni e Piè di pagina ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} 
+\fancyfoot[LE,RO]{\thepage} 
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Ridefinisce lo stile 'plain' (per le pagine d'inizio capitolo)
+\fancypagestyle{plain}{%
+    \fancyhf{}
+    \fancyfoot[LE,RO]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+% --- Formattazione Titoli ---
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]%
+  {\normalfont\Huge\bfseries}% 
+  {\thechapter.}%
+  {1em}% 
+  {}% 
+
+\titlespacing*{\chapter}{0pt}{50pt}{40pt}
+
+% --- Bibliografia ---
+\usepackage[numbers]{natbib}
+
+% --- Link ipertestuali (Caricare per ultimo) ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Tesi Intelligenza Artificiale - Simone Garau},
+    pdfauthor={Simone Garau},
+}
+
+% --- Documento ---
+\begin{document}
+
+% --- Frontespizio ---
+\frontmatter
+
+\begin{titlepage}
+    \centering
+    % Assicurati che il percorso dell'immagine sia corretto su Overleaf
+    \includegraphics[width=8cm]{img/logo_upo.jpg} 
+    \vspace{1cm}
+    
+    {\large Università degli Studi del Piemonte Orientale \par}
+    {\large Dipartimento di Scienze e Innovazione Tecnologica \par}
+    \vspace{0.5cm}
+    {\large \bfseries Corso di Laurea Magistrale in Intelligenza Artificiale e Innovazione Digitale \par}
+    
+    \vfill
+    {\Large Tesi di Laurea Magistrale \par} 
+    \vspace{1cm}
+    {\huge\bfseries Tesi Garau \par}
+    \vspace{0.5cm}
+    {\Large embedding e XAI \par}
+    \vfill
+
+    \begin{minipage}[t]{0.45\textwidth}
+        \begin{flushleft}
+            {\bfseries Relatore:}\\[0.2cm]
+            Prof. Giorgio Leonardi
+        \end{flushleft}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.45\textwidth}
+        \begin{flushright}
+            {\bfseries Candidato:}\\[0.2cm]
+            Simone Garau
+        \end{flushright}
+    \end{minipage}
+
+    \vfill
+    {\large Anno Accademico 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+
+\chapter*{Abstract}
+\input{abstract.tex}
+
+\tableofcontents
+
+% --- Corpo della Tesi ---
+\mainmatter
+\onehalfspacing
+\sloppy
+
+\input{capitoli/01_introduzione.tex}
+% \input{capitoli/02_stato_arte.tex}
+% \input{capitoli/03_metodologia.tex}
+
+% --- Appendici, Bibliografia e Ringraziamenti ---
+\backmatter
+
+% Se hai appendici, mettile qui
+\appendix
+\input{appendici.tex}
+
+\bibliographystyle{unsrtnat}
+\bibliography{bibliografia} 
+
+\chapter*{Ringraziamenti}
+\input{ringraziamenti.tex}
+
+\end{document}

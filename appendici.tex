@@ -1,0 +1,51 @@
+% appendici.tex - Appendici della tesi
+
+\chapter{Dettagli implementativi}
+
+In questa appendice si forniscono dettagli aggiuntivi sull'implementazione dei modelli presentati nella tesi.
+
+\section{Configurazione hardware e software}
+
+Gli esperimenti sono stati condotti utilizzando la seguente configurazione:
+\begin{itemize}
+    \item Python 3.10
+    \item TensorFlow 2.15
+    \item Scikit-learn 1.3
+    \item GPU NVIDIA RTX 4080
+\end{itemize}
+
+\section{Iperparametri dei modelli}
+
+Di seguito si riportano gli iperparametri utilizzati per l'addestramento dei modelli:
+
+\subsection{Random Forest}
+\begin{itemize}
+    \item Numero di alberi: 100
+    \item Profondità massima: 20
+    \item Campioni minimi per split: 5
+\end{itemize}
+
+\subsection{LSTM}
+\begin{itemize}
+    \item Unità LSTM: 128
+    \item Dropout: 0.2
+    \item Learning rate: 0.001
+    \item Batch size: 32
+    \item Epoche: 100
+\end{itemize}
+
+\chapter{Dataset utilizzati}
+
+\section{Struttura dei dati}
+
+I dati utilizzati comprendono misurazioni orarie del consumo energetico nel periodo 2020-2024, per un totale di oltre 35.000 osservazioni.
+
+\section{Preprocessing}
+
+Le seguenti operazioni di preprocessing sono state applicate:
+\begin{enumerate}
+    \item Rimozione di valori anomali (outlier detection)
+    \item Normalizzazione Min-Max
+    \item Creazione di feature temporali (giorno della settimana, ora, mese)
+    \item Gestione di valori mancanti tramite interpolazione lineare
+\end{enumerate}
