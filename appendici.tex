@@ -11,7 +11,7 @@ L'addestramento e la valutazione del modello BERT per la classificazione delle t
     \item CPU: AMD Ryzen 9 5900X
     \item GPU: NVIDIA GeForce RTX 4090 (24 GB VRAM)
     \item RAM: 64 GB
-    \item Sistema Operativo: Linux Ubuntu (ambiente WSL su Windows)
+    \item Sistema Operativo: Linux Ubuntu 24.04.3 LTS (ambiente WSL su Windows)
 \end{itemize}
 
 L'elevata capacità di VRAM della GPU è risultata fondamentale per l'impiego del modello Transformer \texttt{bert-base-uncased} e per garantire l'efficiente esecuzione dell'algoritmo IG Adattivo fino a 5500 steps di campionamento.
@@ -20,12 +20,12 @@ L'elevata capacità di VRAM della GPU è risultata fondamentale per l'impiego de
 
 L'intera pipeline metodologica, dal preprocessing dei log XES fino all'analisi dei risultati XAI, è stata sviluppata in ambiente Python:
 \begin{itemize}
-    \item Python 3.10
-    \item PyTorch (come framework principale per il Deep Learning e il Fine Tuning)
+    \item Python 3.11.13
+    \item PyTorch 2.8 (come framework principale per il Deep Learning e il Fine Tuning)
     \item HuggingFace \texttt{transformers} (per caricamento e gestione del modello BERT)
-    \item Captum (libreria per il calcolo degli Integrated Gradients)
-    \item Optuna (per l'ottimizzazione bayesiana degli iperparametri)
-    \item Scikit-learn (per le metriche di valutazione come \textit{Balanced Accuracy} e lo Stratified K-Fold CV)
+    \item Captum 0.8 (libreria per il calcolo degli Integrated Gradients)
+    \item Optuna 4.5 (per l'ottimizzazione bayesiana degli iperparametri)
+    \item Scikit-learn 1.7.2 (per le metriche di valutazione come \textit{Balanced Accuracy} e lo Stratified K-Fold CV)
 \end{itemize}
 
 \section{Dettagli sull'Hyperparameter Tuning}
@@ -34,7 +34,7 @@ Il processo di tuning, gestito da Optuna e rifinito manualmente, aveva l'obietti
 
 \begin{itemize}
     \item Base model: \texttt{bert-base-uncased} (12 layers, 768 hidden size, 12 attention heads)
-    \item Batch size: Adattiva (ottimizzata in base alla lunghezza massima dello Storytelling per il limite VRAM)
+    \item Batch size: Adattiva (limite VRAM)
     \item Optimizer: AdamW
     \item Funzione di costo: Focal Loss ($\gamma$ e $\alpha$ bilanciati per amplificare l'errore sulla classe $LOS \ge 20$)
     \item Validation strategy: Stratified 5-Fold Cross Validation
@@ -45,7 +45,7 @@ Il processo di tuning, gestito da Optuna e rifinito manualmente, aveva l'obietti
 Come descritto nel Capitolo \ref{ch:metodologia}, è stato condotto un esperimento per mitigare lo sbilanciamento di classe arricchendo il dataset con "storie cliniche" sintetizzate.
 
 \section{Pipeline dell'Esperimento}
-I modelli generativi \texttt{phi-4}, \texttt{gemma-3} e \texttt{Ollama} sono stati eseguiti localmente. Il parametro di Temperatura è stato impostato prossimo allo zero ($T \approx 0.1$) per circoscrivere l'effetto stocastico ed arginare pericolose allucinazioni mediche. Alle reti veniva fornita una traccia reale (classe 1 - LOS anomalo) nel formato Storytelling originale, con l'istruzione di riformularla linguisticamente preservandone il rigoroso ordine temporale e semantico.
+I modelli generativi \texttt{phi-4}, \texttt{gemma-3} e \texttt{Ollama} sono stati eseguiti localmente. Il parametro di Temperatura è stato impostato prossimo allo zero ($T \approx 0.1$) per circoscrivere l'effetto stocastico ed arginare pericolose allucinazioni mediche. Alle reti veniva fornita una traccia reale estratta da un parser per il log clinico in formato XES, con l'istruzione di creare una rappresentazione in linguaggio naturale della traccia del paziente.
 
 \section{Esito e Degradazione delle Metriche}
 Nonostante la supervisione semantica, l'inserimento dei dati aumentati nel processo di training ha paradossalmente deteriorato la metrica di \textit{Balanced Accuracy}. Il calo del potere discriminatorio di BERT evidenzia come, in domini d'alta sensibilità temporale come le sequenze Process Mining ospedaliere, lievi fluttuazioni sintattiche indotte dall'LLM generativo sfalsino irreparabilmente i vettori di attenzione attesi della \textit{classification head}, dimostrando che le variazioni non rispecchiano fedelmente il pattern intrinseco (\textit{ground truth}) reale della degenza. Per questo motivo, la data augmentation sintetica è stata scartata dalla pipeline definitiva.
