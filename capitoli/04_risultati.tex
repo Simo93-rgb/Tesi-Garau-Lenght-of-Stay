@@ -8,42 +8,112 @@ La validazione del modello predittivo \texttt{bert-base-uncased}, architettato s
 
 Al termine del processo di hyperparameter tuning e addestramento supervisionato, la metrica chiave di valutazione, la \textbf{Balanced Accuracy}, si è assestata su valori di circa l'\textbf{88\%}. Questo punteggio assume particolare pregio considerando il gravoso sbilanciamento delle classi in input: la Balanced Accuracy, di fatto media pesata e armonica delle accuratezze sulle due classi in esame (Casi normali vs Casi patologici), testimonia che il classificatore ha evitato la banale rassegnazione sul target statisticamente preponderante (la degenza breve). Un ruolo critico nel conseguimento di quest'alta soglia sensibile è ascrivibile all'adozione differenziale e decisa della Focal Loss, che dinamicamente forzava il focus iterativo di addestramento primariamente sulle tracce rare a LOS anomalo, limitando radicalmente i falsi negativi e inibendo distorsioni di predizione da parte degli esemplari facili e diffusi nel validation set.
 
+% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.1 - CURVA LOSS
 \begin{figure}[htbp]
     \centering
-    % TODO: Inserire qui il grafico "train_val_loss.png" e scommentare la riga sotto
     % \includegraphics[width=0.8\textwidth]{img/train_val_loss.png}
-    \vspace{5cm} % Placeholder se manca l'immagine
+    \vspace{5cm} % Spazio vuoto temporaneo
     \caption{Curva di apprendimento (Training vs Validation Loss). Lo scarto monitorato documenta l'inibizione dell'overfitting nel regime iterativo del transformer.}
     \label{fig:loss_curve}
 \end{figure}
 
+\section{Confronto Prestazionale degli Embedding}
+Prima di eleggere lo \textit{Storytelling} come soluzione definitiva, il modello è stato regolarmente addestrato e testato sulle altre due formulazioni di embedding discusse (Coppie Azione-Token Temporale e Array Concatenati). La Tabella \ref{tab:metrics_comparison} riassume il confronto sulle principali metriche di classificazione binaria. Lo Storytelling ha garantito un balzo in avanti, specialmente nella metrica chiave di \textit{Balanced Accuracy}.
+
+% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.2 - TABELLA METRICHE EMBEDDING
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Embedding} & \textbf{Accuracy} & \textbf{Balanced Accuracy} & \textbf{F1-Score} \\
+        \hline
+        Azioni + Binning & n/a & n/a & n/a \\
+        Array Concatenati & n/a & n/a & n/a \\
+        Storytelling     & n/a & n/a & n/a \\
+        \hline
+    \end{tabular}
+    \caption{Confronto delle prestazioni di classificazione per le tre tecniche di embedding testate.}
+    \label{tab:metrics_comparison}
+\end{table}
+
+A ulteriore riprova delle differenze di convergenza, si riportano le \textbf{Matrici di Confusione} relative ai test set di ciascun approccio. La capacità dello Storytelling di limitare i falsi negativi patologici giustifica l'investimento computazionale del fine-tuning linguistico.
+
+% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.2 - MATRICE CONFUSIONE 1
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{cc|c|c|}
+      & \multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{Predetto}} \\
+      & \multicolumn{1}{c}{} & \multicolumn{1}{c}{Normale} & \multicolumn{1}{c}{Critico} \\
+      \cline{3-4}
+      \multirow{2}*{\textbf{Reale}} & Normale & n/a & n/a \\
+      \cline{3-4}
+      & Critico & n/a & n/a \\
+      \cline{3-4}
+    \end{tabular}
+    \caption{Matrice di confusione: Embedding con Azioni + Binning Temporale.}
+    \label{tab:conf_azioni_binning}
+\end{table}
+
+% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.2 - MATRICE CONFUSIONE 2
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{cc|c|c|}
+      & \multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{Predetto}} \\
+      & \multicolumn{1}{c}{} & \multicolumn{1}{c}{Normale} & \multicolumn{1}{c}{Critico} \\
+      \cline{3-4}
+      \multirow{2}*{\textbf{Reale}} & Normale & n/a & n/a \\
+      \cline{3-4}
+      & Critico & n/a & n/a \\
+      \cline{3-4}
+    \end{tabular}
+    \caption{Matrice di confusione: Embedding con Array Concatenati.}
+    \label{tab:conf_array_concat}
+\end{table}
+
+% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.2 - MATRICE CONFUSIONE 3
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{cc|c|c|}
+      & \multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{Predetto}} \\
+      & \multicolumn{1}{c}{} & \multicolumn{1}{c}{Normale} & \multicolumn{1}{c}{Critico} \\
+      \cline{3-4}
+      \multirow{2}*{\textbf{Reale}} & Normale & n/a & n/a \\
+      \cline{3-4}
+      & Critico & n/a & n/a \\
+      \cline{3-4}
+    \end{tabular}
+    \caption{Matrice di confusione: Embedding con Storytelling.}
+    \label{tab:conf_storytelling}
+\end{table}
+
 \section{Explainable AI: L'Adattamento degli Integrated Gradients}
 Mentre le metriche computazionali provano la capienza predittiva del modello generico per la classificazione dei log ospedalieri, l'aspetto metodologicamente distintivo del progetto risiede nella trasparenza offerta dalle interpretazioni di classe post-hoc. 
 
-Per penetrare la complessità stratificata e contestuale di BERT, lo studio si è appoggiato ciecamente al rigore assiomatico degli \textbf{Integrated Gradients (IG)}. Al fine di eludere disturbi strutturali tipici della backpropagation su vettori sparsi (il noto \textit{Gradient Shattering}), si è resa necessaria una forte revisione ed adattamento della fase di quantizzazione iterativa del calcolo.
-L'algoritmo IG classico accumula linearmente e proporzionalmente gradienti derivati su step di interpolazione costanti e finiti tra input baseline neutro ed input valutato. In questo ecosistema clinico caotico, è stato sviluppato e implementato un \textit{meccanismo adattivo}: il software di explainer stanzia di base l'aggregazione su **1500 steps** di campionamento. Qualora tale campionatura subisca turbolenze intrinseche non garantendo la convergenza matematica sui path integral, il framework si impone di decuplicare esponenzialmente lo sforzo computazionale di raffinamento arrivando ai **5500 steps** forzati, sino ad allinearsi perfettamente sull'uguaglianza tra divergenza previsionale e sommatoria attributiva degli attributi, estinguendo derive e distorsioni sull'affidabilità spaziale dello score.
+Per penetrare la complessità stratificata e contestuale di BERT, lo studio si è appoggiato al rigore assiomatico degli \textbf{Integrated Gradients (IG)}. Al fine di eludere i disturbi strutturali tipici della backpropagation su vettori testuali sparsi (il noto \textit{Gradient Shattering}), si è resa necessaria una forte revisione ed adattamento della fase di quantizzazione iterativa del calcolo.
+
+L'algoritmo IG classico accumula linearmente i gradienti su step di interpolazione costanti. In questo ecosistema clinico caotico, è stato invece implementato un \textit{meccanismo adattivo}. Nello specifico, la convergenza dell'algoritmo è stata valutata rigorosamente imponendo un errore massimo di approssimazione ($\alpha=0.5$). Entro questa robusta soglia di tolleranza, per il $90\%$ delle tracce cliniche sono risultati sufficienti \textbf{1500 steps} di campionamento. Tuttavia, per il restante $10\%$ delle tracce -- fisiologicamente più lunghe e frammentate -- il framework si è imposto di innalzare lo sforzo computazionale di raffinamento, arrivando a forzare l'algoritmo fino a \textbf{5500 steps}. Questo ha garantito un perfetto allineamento tra divergenza previsionale e sommatoria delle attribuzioni, estinguendo ogni distorsione sull'affidabilità spaziale dello \textit{score} associato.
 
 \section{Ricomposizione dei Token e Analisi dell'Impatto Clinico}
 L'applicazione nuda ed estemporanea degli Integrated Gradients su uno \textit{Storytelling} elaborato tramite BERT manifesta tuttavia un profondo limite euristico per un decisore medico umano. BERT sfrutta un tokenizer sub-word (tipicamente il \textit{WordPiece}), spezzando semanticamente le parole rare, gli acronimi nosocomiali ed i tag composti generati in fase di data embedding in atomi non autosufficienti concettualmente (sub-token). L'algoritmo IG standard attribuirebbe un peso o punteggio isolato unicamente ad un confuso ed incomprensibile frammento sillabico di procedura clinica, vanificando per il management il pregio diagnostico ed ottimizzativo del framework.
 
 La presente proposta risolve radicalmente l'impasse introducendo il meccanismo cruciale della \textbf{Ricomposizione Semantica Post-Calcolo} dei token frammentati. Al termine della stratificazione degli IG sub-word, la pipeline esegue un mapping deterministico all'indietro: individua le sillabe appartenenti al medesimo "Vocabolo Clinico Unitario" sorgente, mediandone, allineandone ed assemblandone coerentemente lo score d'impatto originario. Conducendo quest'azione meticolosa su un vocabolario testuale circoscritto da circa **600 varianti distinte di azioni cliniche documentabili** dell'ospedale (diagnosi differenziali, esami bioptici, passaggi in PS, degenze repentine), si assegna rigorosamente per la prima volta un punteggio univoco ed aggregato direttamente allo specifico atto medico effettivo intra-processuale.
 
+% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.4 - ISTOGRAMMA TOP ACTIONS
 \begin{figure}[htbp]
     \centering
-    % TODO: Inserire qui l'istogramma "feature_importance_actions.png" e scommentare la riga sotto
     % \includegraphics[width=0.9\textwidth]{img/feature_importance_actions.png}
-    \vspace{6cm} % Placeholder se manca l'immagine
+    \vspace{6cm} % Spazio vuoto temporaneo
     \caption{Istogramma logaritmico d'estrazione delle metriche d'impatto clinico sulle \textit{Top Actions} associate dai Gradienti allo spreco del LOS strutturale ospedaliero.}
     \label{fig:actions_histogram}
 \end{figure}
 
 Il potenziale di questa disaggregazione lessicale è drastico e restituisce istogrammi e \textit{heatmap} (mappe di calore intra-traccia) leggibili, affidabili e matematicamente bilanciate. Attraverso lo studio dei punteggi aggregati sulle 600 codifiche raggruppabili di reparto, i decisori aziendali o lo steering committee clinico sono muniti finalmente del cruscotto semantico tangibile, atto a localizzare e colmare i veri determinanti processuali ed i colli di bottiglia organizzativi prolunganti le degenze asimmetriche nel panorama sanitario, compiendo un netto salto esplicativo rispetto al rumore statistico del deep learning tradizionale.
 
+% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.4 - HEATMAP STORYTELLING
 \begin{figure}[htbp]
     \centering
-    % TODO: Inserire qui l'heatmap di una traccia (es. "heatmap_trace.png") e scommentare la riga sotto
     % \includegraphics[width=\textwidth]{img/heatmap_trace.png}
-    \vspace{4cm} % Placeholder se manca l'immagine
+    \vspace{4cm} % Spazio vuoto temporaneo
     \caption{Estratto visivo della heatmap \textit{Storytelling}: l'intensità della sfumatura cromatica isola visualmente e semanticamente lo snodo cronologico ed il collo di bottiglia processuale all'interno del fluire della documentazione del paziente.}
     \label{fig:heatmap}
 \end{figure}

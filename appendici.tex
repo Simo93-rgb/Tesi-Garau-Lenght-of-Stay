@@ -40,12 +40,4 @@ Il processo di tuning, gestito da Optuna e rifinito manualmente, aveva l'obietti
     \item Validation strategy: Stratified 5-Fold Cross Validation
 \end{itemize}
 
-\chapter{Data Augmentation con LLM Generativi}
 
-Come descritto nel Capitolo \ref{ch:metodologia}, è stato condotto un esperimento per mitigare lo sbilanciamento di classe arricchendo il dataset con "storie cliniche" sintetizzate.
-
-\section{Pipeline dell'Esperimento}
-I modelli generativi \texttt{phi-4}, \texttt{gemma-3} e \texttt{Ollama} sono stati eseguiti localmente. Il parametro di Temperatura è stato impostato prossimo allo zero ($T \approx 0.1$) per circoscrivere l'effetto stocastico ed arginare pericolose allucinazioni mediche. Alle reti veniva fornita una traccia reale estratta da un parser per il log clinico in formato XES, con l'istruzione di creare una rappresentazione in linguaggio naturale della traccia del paziente.
-
-\section{Esito e Degradazione delle Metriche}
-Nonostante la supervisione semantica, l'inserimento dei dati aumentati nel processo di training ha paradossalmente deteriorato la metrica di \textit{Balanced Accuracy}. Il calo del potere discriminatorio di BERT evidenzia come, in domini d'alta sensibilità temporale come le sequenze Process Mining ospedaliere, lievi fluttuazioni sintattiche indotte dall'LLM generativo sfalsino irreparabilmente i vettori di attenzione attesi della \textit{classification head}, dimostrando che le variazioni non rispecchiano fedelmente il pattern intrinseco (\textit{ground truth}) reale della degenza. Per questo motivo, la data augmentation sintetica è stata scartata dalla pipeline definitiva.
