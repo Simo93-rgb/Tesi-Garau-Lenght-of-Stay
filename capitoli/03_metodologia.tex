@@ -43,7 +43,38 @@ Il dataset presenta uno dei paradossi strutturali più frequenti della Process A
 
 Un prematuro addestramento gestito dalla standard \textit{Binary Cross Entropy} (BCE) ha rivelato l'incapacità del sistema di apprendere equamente. Il classificatore subiva l'influenza della classe dominante, orientandosi verso un banale \textit{ZeroR} o un'ipersensibilità passiva, penalizzando disastrosamente la sensibilità per i casi avversi rari, esattamente i casi di primario interesse per le amministrazioni ospedaliere tese a limitare le anomalie.
 
-Per sanare l'arresa dell'algoritmo nei confronti dei falsi negativi e ricalibrare i gradienti in via differenziale, è stata adottata in fase di Fine Tuning la funzione di costo denominata \textbf{Focal Loss}. Questa funzione matematica \cite{lin2017focal} mutua la sua origine nel dominio della \textit{Computer Vision}, dove nacque per correggere il massiccio sbilanciamento tra uno sconfinato spazio di \textit{background} e piccoli e rari oggetti da identificare. Applicata qui con successo al processing di tracce cliniche, la Focal Loss smorza la priorità computazionale (\textit{loss contribution}) dei target facili e sovrabbondanti in favore dei pazienti mal classificati e rari della classe minoritaria, esonerando l'analista dalla necessità di applicare invasive e forzate euristiche distruttive sul dataset a monte (come un aggressivo \textit{undersampling} che distruggerebbe importanti pattern contestuali globali).
+Per sanare l'arresa dell'algoritmo nei confronti dei falsi negativi e ricalibrare i gradienti in via differenziale, è stata adottata in fase di Fine Tuning la funzione di costo denominata \textbf{Focal Loss} \cite{lin2017focal}. Questa funzione matematica mutua la sua origine nel dominio della \textit{Computer Vision}, dove nacque per correggere il massiccio sbilanciamento tra uno sconfinato spazio di \textit{background} e piccoli e rari oggetti da identificare. Applicata qui con successo al processing di tracce cliniche, la Focal Loss smorza la priorità computazionale (\textit{loss contribution}) dei target facili e sovrabbondanti in favore dei pazienti mal classificati.
+
+\subsection{Formulazione Matematica della Focal Loss}
+Il punto di partenza è la funzione di costo \textit{Cross Entropy} (CE) per la classificazione binaria. Definito $y \in \{\pm 1\}$ come la classe ground-truth e $p \in [0, 1]$ come la probabilità stimata dal modello per la classe $y=1$, la formulazione classica è:
+
+\begin{equation}
+CE(p, y) = \begin{cases} -\log(p) & \text{se } y=1 \\ -\log(1-p) & \text{altrimenti.} \end{cases}
+\end{equation}
+
+Per convenienza notazionale, definendo $p_t$:
+\begin{equation}
+p_t = \begin{cases} p & \text{se } y=1 \\ 1-p & \text{altrimenti,} \end{cases}
+\end{equation}
+la CE si può riscrivere compattamente come $CE(p_t) = -\log(p_t)$.
+
+Un metodo comune per mitigare lo sbilanciamento puro introduce un fattore di peso $\alpha \in [0, 1]$ per la classe 1 e $1-\alpha$ per la classe -1. Definendo $\alpha_t$ in modo analogo a $p_t$, si ottiene la \textit{$\alpha$-balanced Cross Entropy}:
+\begin{equation}
+CE(p_t) = -\alpha_t \log(p_t)
+\end{equation}
+
+Tuttavia, pur bilanciando l'importanza numerica tra positivi e negativi, questa formulazione non differenzia tra esempi \textit{facili} (\textit{easy negatives}) ed esempi \textit{difficili} (\textit{hard examples}). Per abbattere il peso sproporzionato degli innumerevoli esempi facili (i pazienti con degenze standard facilmente prevedibili), Lin et al. introducono un fattore modulante $(1-p_t)^\gamma$, dove $\gamma \ge 0$ è un iperparametro noto come \textit{parametro di focalizzazione} (\textit{focusing parameter}). La formulazione completa della \textbf{Focal Loss} (nella sua variante $\alpha$-balanced pratica) diviene quindi:
+
+\begin{equation}
+FL(p_t) = -\alpha_t (1-p_t)^\gamma \log(p_t)
+\end{equation}
+
+Questa funzione gode di proprietà analitiche fondamentali per il nostro task:
+\begin{itemize}
+    \item Se un esempio ospedaliero è mal classificato o raro (quindi $p_t$ è piccolo), il fattore modulante $(1-p_t)^\gamma$ tende a 1 e la \textit{loss contribution} rimane inalterata, garantendo l'apprendimento.
+    \item Se un esempio è facile e ben classificato ($p_t \rightarrow 1$), il fattore modulante tende a 0, penalizzando (\textit{down-weighting}) fortemente l'impatto sul gradiente globale.
+    \item Il parametro $\gamma$ regola il tasso di questa penalizzazione (addolcendo l'iper-dominanza della classe 0 nel nostro dataset), esonerando l'analista dalla necessità di applicare euristiche forzate e distruttive a valle, come un aggressivo \textit{undersampling} che distruggerebbe preziosi pattern temporali globali.
+\end{itemize}
 
 \section{Setup Sperimentale e Hyperparameter Tuning}
 L'intera pipeline di esperimenti e addestramento supervisionato è stata materialmente elaborata e portata a convergenza su un setup hardware performante, incentrato su una workstation munita di CPU AMD Ryzen 9 5900X, 64 GB di RAM e GPU NVIDIA GeForce RTX 4090 (consentendo l'aumento efficiente delle batch size e l'addestramento distribuito del grafo tensoriale Transformer).
