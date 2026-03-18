@@ -87,7 +87,7 @@ L'impostazione degli iperparametri del modello neurale è sfociata da un process
     \item Un minuzioso \textit{tuning manuale} a posteriori. Affinché i risultati non scivolassero in asimmetrie dimensionali non volute, le alterazioni manuali degli intervalli innescati da Optuna si sono preoccupate di preservare costanti le "proporzioni architetturali" auree del transformer, quali i rapporti intrinseci tra hidden layers, attention heads e scaling rate dello stack.
 \end{itemize}
 
-\section{Indagine Esplorativa: Il Fallimento della Data Augmentation con LLM}
+\section{Indagine Esplorativa: Data Augmentation con LLM}
 Nel tentativo di robustire l'astrazione di BERT sulla classe minoritaria (long-LOS), si è tentato un originale esperimento di estensione del dataset (\textit{Data Augmentation}) avvalendosi per la prima volta dell'intelligenza generativa degli attuali LLM.
 
 La pipeline esplorativa prevedeva l'impiego locale di modelli generativi allo stato dell'arte, nello specifico \texttt{phi-4}, \texttt{gemma-3} e \texttt{Ollama}. Per inibire pericolose allucinazioni mediche e circoscrivere l'effetto stocastico, il parametro di Temperatura è stato impostato prossimo allo zero ($T \approx 0.1$). Alle reti veniva fornita una traccia reale (estratta da un parser per log XES), con l'istruzione di creare o rigenerare varianti testuali grammaticalmente dissimili ma clinicamente equivalenti per espandere artificialmente le scarse occorrenze della classe critica.
