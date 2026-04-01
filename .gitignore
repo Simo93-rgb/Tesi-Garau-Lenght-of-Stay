@@ -4,7 +4,7 @@ piano_lavoro.md
 placeholder.tex
 assets/
 *:Zone.Identifier
-img/
+# img/ (Sbloccato per tracking con Git-LFS)
 .vscode/
 *.pdf
 *.gz
