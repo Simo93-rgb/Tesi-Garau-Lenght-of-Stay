@@ -11,7 +11,7 @@ Al termine del processo di hyperparameter tuning e addestramento supervisionato,
 % PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.1 - CURVA LOSS
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{assets/train_val_loss.png}
+    \includegraphics[width=0.8\textwidth]{img/train_val_loss.png}
 \caption{Curva di apprendimento (Training vs Validation Loss). L'andamento mostra una discesa costante della \textit{training loss}, mentre la \textit{validation loss} raggiunge il suo minimo all'epoca 10. Nelle epoche successive la curva di validazione inizia a divergere, indicando l'innesco dell'\textit{overfitting}. Grazie alla tecnica dell'\textit{early stopping} (impostata con un $\Delta$ minimo di $1\times 10^{-3}$ su una \textit{patience} di 5 epoche), il training si è interrotto all'epoca 15; i pesi del modello sono stati quindi ripristinati all'ottimo dell'epoca 10, garantendo la massima capacità di generalizzazione sui dati non visti.}    \label{fig:loss_curve}
 \end{figure}
 \FloatBarrier
@@ -120,7 +120,7 @@ La presente proposta risolve radicalmente l'impasse introducendo il meccanismo c
 % PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.4 - ISTOGRAMMA TOP ACTIONS
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{assets/histogram_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
+    \includegraphics[width=0.9\textwidth]{img/histogram_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
     \caption{Istogramma logaritmico d'estrazione delle metriche d'impatto clinico sulle \textit{Top Actions} associate dai Gradienti allo spreco del LOS strutturale ospedaliero.}
     \label{fig:actions_histogram}
 \end{figure}
@@ -130,7 +130,7 @@ Il potenziale di questa disaggregazione lessicale è drastico e restituisce isto
 % PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.4 - HEATMAP STORYTELLING
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{assets/heatmap_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
+    \includegraphics[width=\textwidth]{img/heatmap_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
     \caption{Estratto visivo della heatmap \textit{Storytelling}: l'intensità della sfumatura cromatica isola visualmente e semanticamente lo snodo cronologico ed il collo di bottiglia processuale all'interno del fluire della documentazione del paziente.}
     \label{fig:heatmap}
 \end{figure}
