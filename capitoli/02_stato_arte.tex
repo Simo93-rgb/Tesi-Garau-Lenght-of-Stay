@@ -25,13 +25,13 @@ Il cambio di paradigma epocale avviene nel 2017 con l'introduzione dell'architet
 In questo lavoro di tesi, la scelta è ricaduta su un approccio \textit{Encoder-only} poiché lo scopo primario non è generare nuove tracce cliniche, ma classificarle e comprenderne le dinamiche cronologiche globali, traendo massimo vantaggio dal contesto bidirezionale intero.
 
 % PLACEHOLDER CAPITOLO 02 - PARAGRAFO 2.2 - SCHEMA TRANSFORMER
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{img/schema_transformer.png} % Immagine da inserire
-%     \caption{Schema riassuntivo dell'architettura Transformer e delle differenze tra Encoder e Decoder.}
-%     \label{fig:transformer_arch}
-% \end{figure}
-
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/transformer_arch.png} % Immagine da inserire
+    \caption{Schema riassuntivo dell'architettura Transformer nelle tre forme: Encoder-only, Decoder-only e Encoder-Decoder.}
+    \label{fig:transformer_arch}
+\end{figure}
+\FloatBarrier
 Un passo decisivo verso l'analisi semantica delle tracce ospedaliere è stato il superamento delle classiche codifiche One-Hot, tipiche dell'era pre-Transformer, in favore di \textit{embeddings} linguistici sparsi. L'avvento dei Large Language Models (LLM), tra cui Bidirectional Encoder Representations from Transformers (BERT) \cite{devlin2019bert}, ha consentito di addestrare vettori profondamente contestuali su moli sterminate di dati testuali non etichettati. Nel caso clinico, ciò si traduce in un modello capace di osservare e valutare un'intera traccia di eventi contemporaneamente e in modo bidirezionale (in parallelo), decodificando inefficienze e derive diagnostiche senza i colli di bottiglia computazionali del parsing puramente passo-passo.
 
 \section{L'Approccio Storytelling: Il Progetto LEGOLAS}
@@ -70,3 +70,5 @@ Dove $F$ è la funzione predittiva globale del Transformer e $\alpha$ è la cost
 \end{equation}
 
 La rigorosa logica matematica, esente da euristiche arbitrarie o spurie, fa degli \textit{Integrated Gradients} lo strumento ottimale per decostruire e dominare i calcoli a "scatola nera" del Transformer: quantificare l'impatto clinico parola per parola è la chiave metodologica per fornire alle direzioni sanitarie risposte chiare sui propri colli di bottiglia logistici, interpretando in modo robusto l'output finale del classificatore BERT.
+
+

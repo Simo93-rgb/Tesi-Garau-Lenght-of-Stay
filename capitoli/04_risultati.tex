@@ -36,6 +36,16 @@ Prima di eleggere lo \textit{Storytelling} come soluzione definitiva, il modello
     \label{tab:metrics_comparison}
 \end{table}
 
+Per agevolare il colpo d'occhio sulle dinamiche di queste performance, la Figura \ref{fig:confronto_metriche_punti} espone graficamente i differenziali riportati in tabella.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{"img/confronto_metriche_punti.png"}
+    \caption{Rappresentazione grafica a dispersione delle metriche di classificazione a confronto per i tre metodi di embedding testati: \textit{Storytelling}, Azioni + Binning e Array Concatenati. Il grafico illustra visivamente i risultati tabellari, rendendo lampante il vantaggio prestazionale garantito dall'approccio narrativo su tutte le metriche chiave, in particolar modo sulla \textit{Balanced Accuracy} e sull'\textit{F1-Score}.}
+    \label{fig:confronto_metriche_punti}
+\end{figure}
+\FloatBarrier
+
 A ulteriore riprova delle differenze di convergenza, si riportano le \textbf{Matrici di Confusione} relative ai test set di ciascun approccio. La capacità dello Storytelling di limitare i falsi negativi patologici giustifica l'investimento computazionale del fine-tuning linguistico.
 
 % MATRICI DI CONFUSIONE: CONFRONTO

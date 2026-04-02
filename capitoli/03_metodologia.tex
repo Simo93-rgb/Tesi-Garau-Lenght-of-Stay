@@ -4,7 +4,46 @@
 \label{ch:metodologia}
 
 \section{Estrazione e Preprocessing dei Dati}
-Il punto di partenza dell'esperimento è costituito da log ospedalieri estratti in formato XES. L'obiettivo primario di questa fase iniziale è strutturare e formattare tali log non strutturati per renderli digeribili all'architettura neurale sottostante il Transformer. Poiché il task mira ad accoppiare eventi clinici e previsioni temporali del Length of Stay (LOS), è stata condotta una meticolosa opera di data engineering che ha portato alla creazione e al test di tre filosofie distinte di \textit{embedding}:
+Il punto di partenza dell'esperimento è costituito da log ospedalieri estratti in formato XES. L'obiettivo primario di questa fase iniziale è strutturare e formattare tali log non strutturati per renderli digeribili all'architettura neurale sottostante il Transformer. 
+
+\subsection{Analisi Esplorativa del Dataset (EDA)}
+Per acquisire contezza della natura e del volume dei log estratti pre-elaborazione, è stata condotta un'Analisi Esplorativa dei Dati (EDA) sviluppando una pipeline automatizzata in Python (basata principalmente sulla libreria \texttt{pandas} per l'efficiente gestione e \textit{chunking} massivo delle estrazioni). Numerizzando il perimetro dell'indagine, i record grezzi compongono una macro-struttura definita da 7.393 casi clinici unici (singoli pazienti ospitati), all'interno dei quali scorrono ben 88.115 eventi granulari totali non etichettati.
+
+Si rileva contestualmente l'ingente sbilanciamento delle classi, cardine della sfida analitica affrontata in questo progetto: su 7.393 pazienti totali, ben 6.584 esibiscono una degenza classificabile come normale (classe 0), e solamente 809 costituiscono campioni d'anomalia con degenza critica $\ge 20$ giorni (classe 1).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{"img/actions_per_case_distribution.png"}
+    \caption{Distribuzione statistica globale del numero di azioni processuali registrate per singolo caso clinico. Il grafico si caratterizza per una spiccata asimmetria (\textit{right-skewed}), evidenziando come una concentrazione primaria di interazioni ospedaliere rapide all'ingresso si contrapponga ad una ``lunga coda'' indicante pazienti complessi trattenuti in cure iterative stratificate.}
+    \label{fig:actions_distribution}
+\end{figure}
+\FloatBarrier
+
+La natura sequenziale del \textit{Length of Stay} giustifica una rigorosa ponderazione della magnitudo intrinseca per traccia (Figura \ref{fig:actions_distribution}). Il conteggio formale delle azioni per paziente si attesta su una media globale di 12.92, mitigata e più centrata da una mediana fissata a 9.00 atti censiti. Questa forte asimmetria destra (\textit{right-skewness}) rivela una profonda dicotomia nei flussi di cura: sebbene l'amigdala della distribuzione si spenga attorno a percorsi veloci e con rapide dimissioni, esiste una marcata e impattante ``lunga coda'' (\textit{long tail}) di pazienti complessi e critici che richiamano sistematicamente a sé decine o centinaia di re-interazioni ed esami.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{"img/class_quantity_boxplot.png"}
+    \caption{Boxplot di confronto diretto tra il numero d'interazioni erogate ai pazienti di classe 0 (degenza limitata) e di classe 1 (degenza prolungata). Risalta ad occhio nudo la traslazione dei quartili a sfavore della classe anomala, gravata intrinsecamente da percorsi ben più caotici, iterativi ed onerosi quantitativamente per la clinica.}
+    \label{fig:class_quantity_boxplot}
+\end{figure}
+\FloatBarrier
+
+Tale eterogeneità di azioni decolla definitivamente incrociando i flussi con l'esito di classe (Figura \ref{fig:class_quantity_boxplot}): appare nettissimo il divario tra i cluster, poiché la classe 1 (long-LOS) detiene tracciati mediani densissimi e spaventosamente più stratificati rispetto ai degenti a basso LOS. Approvvigionarsi di questo spunto speculativo è essenziale per ratificare sul nascere l'adozione dell'architettura iterativa estesa come BERT. Una classica catena deterministica frammenterebbe e disperderebbe i propri cicli dinanzi a tracce massicce, laddove solo le architetture guidate da parallela \textit{Self-Attention} garantiscono di ingerire in un'unica presa le dipendenze cronologiche complesse che avvolgono centinaia di passi ospedalieri.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{"img/class_action_prevalence_diff_top.png"}
+    \caption{Panoramica estrapolata dei \textit{delta} di prevalenza percentuale (sbilanciamento) per le singole azioni ospedaliere fortemente correlate in modo endogeno alla classe d'emergenza logistica 1.}
+    \label{fig:class_action_prevalence}
+\end{figure}
+\FloatBarrier
+
+Ultima ma decisiva esplorazione del background grezzo consiste nell'isolare l'asimmetria delle frequenze a compartimenti rigidi (Figura \ref{fig:class_action_prevalence}). Affiorano per deduzione statistica primitiva vistosi gap nei vettori d'azione ad alta probabilità critica, portando all'apice allarmante eventi quali la "Visita Infettivologica", la "Radiografia Torace a Letto" o il fatidico "Posizionamento Catetere Venoso Centrale". 
+Ancorché preliminari, mere proiezioni che un'EDA limitata esprime e quantifica a mano senza alcuna causazione logica interna fra loro, questi indizi preparano l'anticipazione teoretica. Il Transformer, in fase di training, non leggerà questo istogramma: apprenderà induttivamente rintracciando ed attribuendo importanza predittiva in cieco proprio verso snodi clinici equivalenti; quest'operazione di decostruzione avverrà esplicitata in output nel successivo Capitolo \ref{ch:risultati} a mezzo degli ancoraggi esplicativi XAI offerti dagli Integrated Gradients.
+
+\subsection{Approcci e Formattazione degli Embedding}
+Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici elaborati a corretto formato ed interfacciandoli poi col \textit{Learning} del Transformer, è stata condotta una meticolosa opera preliminare testando tre filosofie distinte di \textit{embedding}:
 
 \begin{enumerate}
     \item \textbf{Azioni cliniche + Binning Temporale:} In questo approccio, il preprocessing concatena coppie formate dall'azione clinica e da un token temporale speciale. Il timing continuo tra le azioni viene discretizzato (\textit{binning}) in categorie predefinite. Un esempio di traccia processata è il seguente:
@@ -87,6 +126,18 @@ Questa funzione gode di proprietà analitiche fondamentali per il nostro task:
     \item Se un esempio è facile e ben classificato ($p_t \rightarrow 1$), il fattore modulante tende a 0, penalizzando (\textit{down-weighting}) fortemente l'impatto sul gradiente globale.
     \item Il parametro $\gamma$ regola il tasso di questa penalizzazione (addolcendo l'iper-dominanza della classe 0 nel nostro dataset), esonerando l'analista dalla necessità di applicare euristiche forzate e distruttive a valle, come un aggressivo \textit{undersampling} che distruggerebbe preziosi pattern temporali globali.
 \end{itemize}
+
+L'effetto della parametrizzazione $\gamma$ si evince analizzando visivamente l'andamento della funzione per vari scenari, confrontando la Focal Loss con la Cross Entropy standard (Figura \ref{fig:focal_loss_comparison}).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{"img/focal loss fig 1.png"}
+    \caption{Confronto tra la Cross Entropy (CE) e diverse configurazioni della Focal Loss. Sull'asse delle ascisse è riportata la probabilità effettiva stimata dal modello, $p_t \in [0, 1]$, mentre sull'asse delle ordinate figura il valore della funzione di costo. Si noti come, al crescere dell'iperparametro di focalizzazione $\gamma$ (es. $\gamma=2, 5$), la \textit{loss} addebitata agli esempi facili e ben classificati ($p_t \rightarrow 1$) subisca un drastico schiacciamento rispetto al decadimento più lento della CE. Questo espediente permette all'osservazione di focalizzarsi dinamicamente sugli esempi più critici ed errati.}
+    \label{fig:focal_loss_comparison}
+\end{figure}
+\FloatBarrier
+
+Una volta garantita la capacità discriminatoria del modello su classi sbilanciate, si procede all'analisi della sua interpretabilità tramite le tecniche descritte nel capitolo successivo.
 
 \section{Setup Sperimentale e Hyperparameter Tuning}
 L'intera pipeline di esperimenti e addestramento supervisionato è stata materialmente elaborata e portata a convergenza su un setup hardware performante, incentrato su una workstation munita di CPU AMD Ryzen 9 5900X, 64 GB di RAM e GPU NVIDIA GeForce RTX 4090 (consentendo l'aumento efficiente delle batch size e l'addestramento distribuito del grafo tensoriale Transformer).
