@@ -142,43 +142,56 @@ La presente proposta risolve radicalmente l'impasse introducendo il meccanismo c
 
 Conducendo quest'azione meticolosa su un vocabolario testuale raggruppabile attorno ai parametri cardine documentabili dell'ospedale (esami, visite, trattamenti, ecc.), si assegna rigorosamente per la prima volta un punteggio univoco ed aggregato dinamicamente allo specifico atto medico effettivo intra-processuale reale in maniera coerente.
 
-A titolo dimostrativo, si consideri la mappatura dell'evento diagnostico "Ecocardiografia". Sottoposta al WordPiece tokenizer di BERT, la stringa viene fatalmente deturpata in tre unità sub-lessicali distinte: \texttt{['Eco', '\#\#cardio', '\#\#grafia']}. Gli \textit{Integrated Gradients} nativi riverserebbero su ciascun frammento un proprio scostamento logit isolato, producendo frazioni analitiche incomprensibili per la direzione sanitaria. L'algoritmo sviluppato interviene applicando integralmente lo Step B intercettando la sequenza dei suffissi (marcati dal prefisso \texttt{\#\#}) per procedere alla sommatoria lineare della quota vettoriale compressa pre-calcolata nello Step A. In questo caso d'esempio, i singoli punteggi parziali vengono addizionati algebricamente in un \textbf{unico macro-score coerente} che la rete restituisce esplicitamente all'etichetta dell'esame primario integro, bypassando le mutilazioni morfologiche del Transformer (Figura \ref{fig:token_recomposition}).
+A titolo dimostrativo e per cementificare \textit{end-to-end} i costrutti discussi, si consideri la mappatura dell'evento di log processato e testato: \textbf{"Cardiology visit"}. Essendo la traduzione semantica delle degenze effettuata in lingua inglese per assecondare la sintassi per cui è stato istruito \texttt{bert-base-uncased}, la ricostruzione \textit{post-hoc} risulta fondamentale e modella testualmente le 6 sotto-fasi matematiche IG presentate poc'anzi:
+
+\begin{enumerate}
+    \item \textbf{Tokenizzazione e Baseline:} Il testo d'ingresso viene prelazionato dal Layer e sfaldato dal \textit{WordPiece} tokenizer in \texttt{[CLS, card, \#\#iology, visit, SEP]}. Per generare l'esca matematica su cui far orbitare la derivata parziale rispetto agli input formattati di riga, viene allocato il \textit{baseline tensor} costituito da un vettore di pari dimensionalità ma saturato esclusivamente dal fattore nullo Padding (ID 0): \texttt{[PAD, PAD, PAD, PAD, PAD]}.
+    \item \textbf{Interpolazione a Step Finita:} Per congiungere la baseline fittizia all'input paziente reale in esame, l'integrale approssimato crea $m=50$ frazioni spaziali equidistanti. In ciascuno step discreto $\alpha_i$ (che corre tra $0.00$ e la prossimità asintotica $1.00$) avviene la fusione interpolarizzata e pesata nel continuo per l'indagine algebrica: $\text{Baseline}_{emb} + \alpha_i \times (\text{Input}_{emb} - \text{Baseline}_{emb})$.
+    \item \textbf{Attribuzione Sparsa Ponderata:} Su ciascuno dei 50 steps spaziotemporali è valutato iterativamente il \textit{gradiente} attenzionale di logica contro il nodo predittivo finale del modello. Terminate le fasi di inferenza passiva e raccolta retroattiva, l'integrazione numerica distribuisce come ritorno un tensore matematicamente irragionevole per il singolo uomo: ogni sub-token testuale processato (tra cui \texttt{card} e \texttt{\#\#iology}) espone difatti sulla griglia ben $768$ valori \textit{float} nativi.
+    \item \textbf{Aggregazione Step A (Collasso Logit):} L'azione coesiva interviene tramite la macro-riduzione $\Sigma_{dim=-1}$, annullando algebricamente l'orizzonte tensoriale isolando l'intensità direzionale netta. Supponendo, a titolo d'esempio esplicativo, di quantificare un attrito generato di $+12.45$ in capo a \texttt{card}, una sfumatura concettuale d'apporto di $+7.83$ isolata sul suffisso \texttt{\#\#iology} e uno spiccato interesse computazionale quantificabile a $+18.92$ ad uso stringa \texttt{visit}. Viene qui forzata anche l'identificazione selettiva in esubero: i sub-token \texttt{CLS} e \texttt{SEP} vengono destituiti dalla pipeline a questo esatto traguardo.
+    \item \textbf{Aggregazione Step B (Cucitura Umana Lessicale):} L'elaboratore scansiona deterministicamente il logit e localizza le sequele morfologiche dipendenti sintatticamente marcate da \texttt{\#\#}; in automatico, i rami deboli accorpano l'eredità e la devolvono numericamente forgiando e resuscitando per il referto l'evento "\textbf{Cardiology}", detentrice d'ora dell'assoluto impatto algoritmico ($12.45 + 7.83 = 20.28$). Il token clinico \textbf{visit} sfugge ai trigger morfologici esasperanti mantenendo di concerto la priorità e la scala dimensionale intatta originale accumulata per intero e mai frammentata a monte ($18.92$).
+\end{enumerate}
+
+Quest'azione algebrica mirata restituisce un set di \textbf{macro-scores unici per atto medico coerente} (Figura \ref{fig:token_recomposition}), che l'architettura espone interamente decodificato e quantificato, superando le mutilazioni linguistiche del Transformer e favorendone lo sviluppo ed ispezione manageriale per le direzioni sanitarie attive.
 
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}[
         node distance=2.5cm,
         box/.style={rectangle, draw=blue!80!black, fill=blue!5, thick, minimum height=1cm, minimum width=2.2cm, rounded corners=2mm, align=center},
-        finalbox/.style={rectangle, draw=green!60!black, fill=green!10, thick, minimum height=1.2cm, minimum width=6cm, rounded corners=2mm, align=center},
+        finalbox/.style={rectangle, draw=green!60!black, fill=green!10, thick, minimum height=1.2cm, minimum width=4cm, rounded corners=2mm, align=center},
         arrow/.style={->, >=stealth, thick, color=gray!80!black},
         scorelabel/.style={align=center, font=\small\bfseries, color=red!70!black}
         ]
 
         % Original token nodes
-        \node[box] (eco) {\texttt{Eco}};
-        \node[box, right of=eco, xshift=1.0cm] (cardio) {\texttt{\#\#cardio}};
-        \node[box, right of=cardio, xshift=1.0cm] (grafia) {\texttt{\#\#grafia}};
+        \node[box] (card) {\texttt{card}};
+        \node[box, right of=card, xshift=1.0cm] (iology) {\texttt{\#\#iology}};
+        \node[box, right of=iology, xshift=1.0cm] (visit) {\texttt{visit}};
 
-        % IG Scores
-        \node[scorelabel, below of=eco, yshift=1.2cm] (seco) {IG: $+0.2$};
-        \node[scorelabel, below of=cardio, yshift=1.2cm] (scardio) {IG: $+0.5$};
-        \node[scorelabel, below of=grafia, yshift=1.2cm] (sgrafia) {IG: $+0.1$};
+        % IG Scores (After Step A)
+        \node[scorelabel, below of=card, yshift=1.2cm] (scard) {IG: $+12.45$};
+        \node[scorelabel, below of=iology, yshift=1.2cm] (siology) {IG: $+7.83$};
+        \node[scorelabel, below of=visit, yshift=1.2cm] (svisit) {IG: $+18.92$};
 
         % The mathematical merge process
-        \node[below of=cardio, yshift=-0.5cm] (plus) {\LARGE \textbf{$\Sigma \rightarrow$}};
+        \node[below of=card, xshift=1.75cm, yshift=-0.8cm] (plus) {\LARGE \textbf{$\Sigma \rightarrow$}};
 
-        % Final recomposed node
-        \node[finalbox, below of=plus, yshift=0.5cm] (final) {\large \textbf{Ecocardiografia}};
-        \node[scorelabel, color=green!40!black, below of=final, yshift=1.2cm] (sfinal) {\large Score Aggregato: $+0.8$};
+        % Final recomposed nodes
+        \node[finalbox, below of=plus, yshift=0.5cm] (final) {\large \textbf{Cardiology}};
+        \node[scorelabel, color=green!40!black, below of=final, yshift=1.2cm] (sfinal) {\large Score Aggregato: $+20.28$};
+        
+        \node[finalbox, below of=visit, yshift=-1.85cm, minimum width=3cm] (finalvisit) {\large \textbf{visit}};
+        \node[scorelabel, color=green!40!black, below of=finalvisit, yshift=1.2cm] (sfinalvisit) {\large Score Autonomo: $+18.92$};
 
         % Connectors
-        \draw[arrow] (seco) -- (plus);
-        \draw[arrow] (scardio) -- (plus);
-        \draw[arrow] (sgrafia) -- (plus);
+        \draw[arrow] (scard) -- (plus);
+        \draw[arrow] (siology) -- (plus);
         \draw[arrow] (plus) -- (final);
+        \draw[arrow] (svisit) -- (finalvisit);
         
     \end{tikzpicture}
-    \caption{Processo matematico di ricomposizione semantica. I sub-token frammentati originati dal tokenizer WordPiece di BERT vengono re-allineati. I loro \textit{Integrated Gradients} (IG) parziali vengono sommati per conferire un punteggio di impatto finale univoco alla pratica clinica "Ecocardiografia".}
+    \caption{Ricomposizione post-calcolo della refertazione "Cardiology visit". Il processo addiziona computazionalmente (\textit{Step B}) gli score vettoriali scalari dei \textit{sub-token} frammentati interdipendenti (\texttt{card} e \texttt{\#\#iology}). Il token isolato \texttt{visit} trasferisce a valle la sua integrità quantitativa.}
     \label{fig:token_recomposition}
 \end{figure}
 
