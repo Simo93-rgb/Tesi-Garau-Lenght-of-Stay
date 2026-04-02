@@ -50,9 +50,9 @@ Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici el
 \begin{minted}[fontsize=\small]{json}
 {"case_id": "5870415", 
  "tokens": ["Complete abdomen ultrasound", "_TIME_DELTA_START_", 
-            "CT of the skull", 
+            "Computerized tomography of the skull", 
             "_TIME_DELTA_START_", "Complete abdomen ultrasound", 
-            "_TIME_DELTA_LONG_", "CT of the skull", 
+            "_TIME_DELTA_LONG_", "Computerized tomography of the skull", 
             "_TIME_DELTA_MEDIUM_"], 
  "label_id": 0
 }
@@ -61,8 +61,8 @@ Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici el
     \item \textbf{Array concatenati (Azioni + Distanze numeriche):} Questa seconda forma di preprocessing costruisce l'embedding affiancando due array distinti: uno contenente esclusivamente la sequenza testuale delle azioni cliniche e un array parallelo numerico (\textit{float}) esprimente la distanza in secondi dall'evento precedente. Un esempio:
 \begin{minted}[fontsize=\small]{json}
 {"case_id": "5870415", 
- "tokens": ["Complete abdomen ultrasound", "CT of the skull", 
-            "Complete abdomen ultrasound", "CT of the skull"], 
+ "tokens": ["Complete abdomen ultrasound", "Computerized tomography of the skull", 
+            "Complete abdomen ultrasound", "Computerized tomography of the skull"], 
  "time_deltas": [0.0, 0.0, 728160.0, 178980.0], 
  "label_id": 0
 }
@@ -74,9 +74,9 @@ Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici el
  "story": "The patient, 87 years old, underwent a series of examinations and 
  interventions during hospitalization.
 After 0 seconds, the following examinations were performed simultaneously: 
-Complete abdomen ultrasound and CT of the skull.
+Complete abdomen ultrasound and Computerized tomography of the skull.
 After 728,160 seconds, Complete abdomen ultrasound was performed.
-After 178,980 seconds, CT of the skull was performed.",
+After 178,980 seconds, Computerized tomography of the skull was performed.",
 "label_id": 0
 }
 \end{minted}
@@ -206,6 +206,71 @@ L'impostazione degli iperparametri del modello neurale è sfociata da un process
 \section{Indagine Esplorativa: Data Augmentation con LLM}
 Nel tentativo di robustire l'astrazione di BERT sulla classe minoritaria (long-LOS), si è tentato un originale esperimento di estensione del dataset (\textit{Data Augmentation}) avvalendosi dell'intelligenza generativa degli attuali LLM.
 
-La pipeline esplorativa prevedeva l'impiego locale di modelli generativi allo stato dell'arte, nello specifico \texttt{phi4:14b}, \texttt{gemma3:27b} utilizzati mediante \texttt{Ollama}, strumento open source per l'esecuzione di LLM in locale. Per inibire pericolose allucinazioni mediche e circoscrivere l'effetto stocastico, il parametro di Temperatura è stato impostato prossimo allo zero ($T \approx 0.1$). Alle reti veniva fornita una traccia reale (estratta da un parser per log XES), con l'istruzione di creare o rigenerare varianti testuali grammaticalmente dissimili ma clinicamente equivalenti per espandere artificialmente le scarse occorrenze della classe critica.
+La pipeline esplorativa prevedeva l'impiego locale di modelli generativi allo stato dell'arte, nello specifico \texttt{phi4:14b} e \texttt{nous-hermes2:34b}, eseguiti tramite l'ambiente open-source \texttt{Ollama}. Per inibire le allucinazioni e circoscrivere l'effusione creativa dell'esposizione testuale, la \textit{Temperature} è stata fissata al minimo rigido ($T=0.0$). 
 
-Nonostante la supervisione semantica e il rigore dell'indagine, i risultati empirici hanno inequivocabilmente sancito il fallimento dell'ipotesi: l'inserimento dello \textit{Storytelling} sintetico nel processo di \textit{fine-tuning} ha paradossalmente deteriorato le metriche, degradando la \textit{Balanced Accuracy} e le curve ROC. Il calo del potere discriminatorio di BERT evidenzia come, in domini ad alta sensibilità temporale come le sequenze ospedaliere, lievi fluttuazioni sintattiche indotte dall'IA generativa sfalsino irreparabilmente i vettori di attenzione attesi, dimostrando che tali variazioni formali non rispecchiano fedelmente il pattern intrinseco (\textit{ground truth}) reale della degenza. A seguito di questa consapevolezza negativa, l'embedding finale è rimasto solidamente ancorato al puro \textit{parsing} scriptato deterministico sui log diretti, e la data augmentation sintetica è stata scartata dalla pipeline definitiva.
+Il layer di codice Python istruiva severamente le reti a limitarsi ad un mero lavoro di riformattazione narrativa, passando iterativamente le coordinate base della traccia log:
+
+\begin{minted}[fontsize=\scriptsize]{python}
+prompt = f"""You are an expert physician who writes discursive clinical
+narratives in English for BERT/NLP analysis.
+
+IMPORTANT - MANDATORY MEDICAL TERMINOLOGY:
+You must use EXACTLY the medical terminology specified in the clinical vocabulary.
+
+PATIENT DATA:
+- Information: {patient_desc}
+
+MEDICAL EVENTS SEQUENCE (already standardized):
+{events_text}
+
+SPECIFIC RULES:
+1. USE EXACTLY the provided activity names (already standardized)
+2. Introduction with age and medical context
+3. Separate paragraph for each temporal group
+4. Format numbers: "13,380 seconds" (with commas for thousands)
+5. Concurrent events: "the following examinations were performed simultaneously:"
+6. Connectors: "The [activity] was performed", "After X seconds [activity] was executed"
+7. Paragraphs separated by blank line
+8. Keep medical terminology IDENTICAL to provided terminology
+9. Always conclude with "At the end of the clinical pathway, the medical events were concluded."
+10. NO translations or paraphrases of medical activity names
+11. All text must be in ENGLISH"""
+\end{minted}
+
+Nonostante l'imbragatura direzionale e sintattica imposta a livello di framework, l'ingestione e la rielaborazione da parte delle reti ha portato a delle devianze gravose. A titolo di dimostrazione, viene qui incollata la narrativa sintetica prodotta dal modello \texttt{phi4:14b} a fronte del caso ospedaliero ID "5870415" (contenente originariamente 4 atti nosocomiali primari ed oggettivi estratti dai registri):
+
+\begin{minted}[fontsize=\scriptsize]{json}
+{
+  "case_id": "5870415",
+  "story_text": "The patient, 87 years old, underwent a series of examinations...
+The Complete abdomen ultrasound was performed as the initial examination to 
+assess abdominal structures for any abnormalities or pathologies that might 
+require further investigation... This non-invasive imaging technique provided 
+valuable insights... After 0 seconds, the following examinations were performed 
+simultaneously: Computerized tomography of the skull and Complete abdomen ultrasound. The Coputerized tomography of 
+the skull was conducted to evaluate any potential intracranial issues such as 
+hemorrhages, tumors, or other abnormalities... After 728,160 seconds 
+(approximately 8 days and 7 hours), another Complete abdomen ultrasound was 
+executed. This follow-up examination aimed to monitor any changes...
+At the end of the clinical pathway, the medical events were concluded."
+}
+\end{minted}
+
+L'esempio decodifica e testimonia vividamente la magnitudo del collasso documentale registrato. Nonostante l'indicazione tecnica tassativa di attenersi pedissequamente alle stringhe (\textit{rule \#10}), il tensore \texttt{phi4:14b} ha generato con sicumera un'immensa \textbf{allucinazione motivazionale}, un ricalcolo cognitivo quantitativamente superfluo per la classificazione: l'LLM ha infatti affiancato all'asciutta esecuzione d'esame testuale una lunghissima disserzione sulle astrazioni teoriche medico-diagnostiche sottostanti (\textit{"to evaluate any potential intracranial issues such as hemorrhages"}).
+
+Un tentativo risolutivo effettuato attingendo a reti di profondità parametrica superiore interrogando \texttt{nous-hermes2:34b} ha effettivamente arginato lo straparlo logico, riportando miracolosamente la decodifica entro gli argini linguistici procedurali di struttura previsti, incappando però anch'essa in subdole alterazioni:
+
+\begin{minted}[fontsize=\scriptsize]{json}
+{
+  "case_id": "5870415",
+  "story_text": "The patient, an 87-year-old individual, underwent a series of 
+examinations... The first event was a complete abdomen ultrasound... 
+Simultaneously, a Computerized tomography scan of the skull without contrast medium was executed. 
+After 728160 seconds, another complete abdomen ultrasound was conducted. 
+Following this, a Computerized tomography scan of the skull with contrast medium was carried out..."
+}
+\end{minted}
+
+In questo secondo, e potenzialmente ancor più minatorio, frangente ingegneristico, il LLM si è preso la pericolosa licenza esecutiva di ipotizzare procedure con e senza contrasto diagnostico, scaturite da varianze minime (\textit{"with contrast medium / without contrast medium"}). Pur essendo refertazioni sintatticamente plausibili e pertinenti in un dizionario cardiovascolare, tali appendici in realtà differiscono dal dizionario standard originario iniettato e manomettono incroci di gravità prognostiche.
+
+I due esperimenti indipendenti di \textit{fine-tuning} condotti sull'apprendimento distribuito di tali costrutti alterati hanno inequivocabilmente sancito il \textbf{fallimento empirico e scientifico dell'ipotesi}: l'inserimento dello \textit{Storytelling} sintetico, denso per estensione testuale e concettualmente arricchito da tali artefatti fantasiosi non richiesti, ha deteriorato le metriche d'astrazione di BERT. Il degrado tangibile calcolato sull'assestamento della \textit{Balanced Accuracy} evidenzia drammaticamente come, in ecosistemi d'investigazione ad alta sensibilità strutturale (\textit{Process Analytics}), l'abnorme rumoristà testuale indotta dalla prosa delle IA saturino drasticamente i logit d'Attention del Transformer impedendo alla rete di localizzare la reale distribuzione cronologica e il "tempo motore" asettico per lo scarto diagnostico di fine soggiorno. A seguito di questa consapevolezza preclusiva, l'embedding testuale \textit{Storytelling} vincente descritto nel progetto è rimasto unicamente ed orgogliosamente relegato alla stabilità del software di \textit{parsing} scriptato che incrocia algoritmicamente i log.
