@@ -199,17 +199,17 @@ Quest'azione algebrica mirata restituisce un set di \textbf{macro-scores unici p
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{img/histogram_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
-    \caption{Istogramma logaritmico d'estrazione delle metriche d'impatto clinico sulle \textit{Top Actions} associate dai Gradienti allo spreco del LOS strutturale ospedaliero.}
+    \caption{Istogramma logaritmico d'estrazione delle metriche d'impatto clinico sulle \textit{Top Actions} associate dai Gradienti allo spreco del LOS. Il grafico aggrega i dati vettoriali relativi ad un campione mirato di 109 pazienti transitati presso il reparto operativo 701 (Cardiochirurgia) dell'Azienda Ospedaliera di Alessandria.}
     \label{fig:actions_histogram}
 \end{figure}
 \FloatBarrier
-Il potenziale di questa disaggregazione lessicale è drastico e restituisce istogrammi e \textit{heatmap} (mappe di calore intra-traccia) leggibili, affidabili e matematicamente bilanciate. Attraverso lo studio dei punteggi aggregati sulle 600 codifiche raggruppabili di reparto, i decisori aziendali sono ora muniti di un cruscotto semantico \textbf{affidabile}. Questo strumento permette di localizzare i veri determinanti processuali che prolungano le degenze, \textbf{superando il limite interpretativo tipico dei modelli black-box}.
+Il potenziale di questa disaggregazione lessicale è drastico e restituisce istogrammi e \textit{heatmap} (mappe di calore intra-traccia) leggibili, affidabili e matematicamente bilanciate. A titolo dimostrativo (Figure \ref{fig:actions_histogram} e \ref{fig:heatmap}), sono state estratte e renderizzate le logiche attenzionali relative a un pool di 109 degenze afferenti al Reparto 701 di Cardiochirurgia (Ospedale di Alessandria). Attraverso lo studio dei punteggi aggregati sulle esecutive raggruppabili di questo dipartimento, i decisori aziendali sono ora muniti di un cruscotto semantico \textbf{affidabile}. Questo strumento permette di localizzare i veri determinanti processuali che prolungano materialmente le degenze cliniche, \textbf{superando il limite interpretativo tipico dei modelli black-box}.
 
 % PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.4 - HEATMAP STORYTELLING
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{img/heatmap_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
-    \caption{Estratto visivo della heatmap \textit{Storytelling}: l'intensità della sfumatura cromatica isola visualmente e semanticamente lo snodo cronologico ed il collo di bottiglia processuale all'interno del fluire della documentazione del paziente.}
+    \caption{Estratto visivo della heatmap \textit{Storytelling} generata per una traccia in degenza di Cardiochirurgia (Ospedale di Alessandria): l'intensità della sfumatura cromatica isola visualmente e semanticamente lo snodo cronologico ed il collo di bottiglia processuale all'interno del fluire della documentazione del paziente.}
     \label{fig:heatmap}
 \end{figure}
 \FloatBarrier
