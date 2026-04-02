@@ -47,7 +47,7 @@ Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici el
 
 \begin{enumerate}
     \item \textbf{Azioni cliniche + Binning Temporale:} In questo approccio, il preprocessing concatena coppie formate dall'azione clinica e da un token temporale speciale. Il timing continuo tra le azioni viene discretizzato (\textit{binning}) in categorie predefinite. Un esempio di traccia processata è il seguente:
-\begin{verbatim}
+\begin{minted}[fontsize=\small]{json}
 {"case_id": "5870415", 
  "tokens": ["Complete abdomen ultrasound", "_TIME_DELTA_START_", 
             "CT of the skull", 
@@ -56,20 +56,20 @@ Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici el
             "_TIME_DELTA_MEDIUM_"], 
  "label_id": 0
 }
-\end{verbatim}
+\end{minted}
     
     \item \textbf{Array concatenati (Azioni + Distanze numeriche):} Questa seconda forma di preprocessing costruisce l'embedding affiancando due array distinti: uno contenente esclusivamente la sequenza testuale delle azioni cliniche e un array parallelo numerico (\textit{float}) esprimente la distanza in secondi dall'evento precedente. Un esempio:
-\begin{verbatim}
+\begin{minted}[fontsize=\small]{json}
 {"case_id": "5870415", 
  "tokens": ["Complete abdomen ultrasound", "CT of the skull", 
             "Complete abdomen ultrasound", "CT of the skull"], 
  "time_deltas": [0.0, 0.0, 728160.0, 178980.0], 
  "label_id": 0
 }
-\end{verbatim}
+\end{minted}
 
     \item \textbf{Storytelling in linguaggio naturale:} L'approccio finale, che costituisce il core metodologico del progetto TEXLOS \cite{texlos2026} e che è stato preferito ai precedenti, si rifà al pionieristico lavoro di traduzione semantica dei log del progetto LEGOLAS \cite{PASQUADIBISCEGLIE2025128224}. Anziché \textbf{alimentare} il classificatore con una combinazione mista di vettori numerici e codici, gli eventi e i vincoli cronologici logici della traccia sono tradotti letteralmente in frasi inglesi strutturate grammaticalmente, producendo interi paragrafi coerenti narranti il percorso diagnostico/terapeutico di ciascun paziente.
-\begin{verbatim}
+\begin{minted}[fontsize=\small]{json}
 {"case_id": "5870415", 
  "story": "The patient, 87 years old, underwent a series of examinations and 
  interventions during hospitalization.
@@ -79,7 +79,7 @@ After 728,160 seconds, Complete abdomen ultrasound was performed.
 After 178,980 seconds, CT of the skull was performed.",
 "label_id": 0
 }
-\end{verbatim}
+\end{minted}
 \end{enumerate}
 
 \subsection{Dettagli Implementativi dell'Algoritmo di Storytelling}
@@ -94,9 +94,10 @@ La fase autoriale vera e propria è governata dalla classe \texttt{StoryGenerato
     \item \textbf{Indipendenza dal Protocollo di Triage:} In questo assunto ideologico e programmatico risiede la marcata differenza con l'originario e nobile lavoro LEGOLAS. L'architettura antesignana era pensata, come ben esplicitato nel suo file template originario statico (\texttt{skeleton.py}), al fine di interpolare un set limitato e assai rigido di misurazioni fisiologiche assunte nei reparti chiusi di Pronto Soccorso, lavorando colmando variabili standard d'emergenza precompilate (come ad esempio frequenza respiratoria, temperatura corporea, scala del dolore, trasportabilità empirica del paziente). Al contrario, nel setup universale di TEXLOS i pazienti viaggiano attraverso flussi di innumerevole portata procedurale e verso decine di sezioni nosocomiali disparate dove i medici interrogano esami diametralmente spuri e privi di una sintassi pregressa da manuale matematico. Il generatore nostro sopperisce a tale carenza tramite dizionari interni flessibili e \textbf{regole di template matching dinamiche} agnostiche a monte, concepite unicamente per incollare la tassonomia enciclopedica medica agli snodi discorsivi del transformer, non vincolando l'algoritmo alla saturazione logica per specifici sensori numerici ospedalieri.
 \end{itemize}
 
+\newpage
 A scopo esemplificativo, il seguente frammento di pseudo-codice descrive la routine adoperata dal software in \texttt{story\_generator.py} per snellire testualmente (\textit{trimming} sintattico) il sovraffolamento degli stadi simultanei ed iniettare i \textit{time-delta} per una traccia degenziale prima dell'invio in NLP ad estrapolazione avvenuta:
 
-\begin{verbatim}
+\begin{minted}[fontsize=\small]{python}
 def create_narrative_from_trace(trace_events):
     sorted_events = sort_by_timestamp(trace_events)
     grouped_events = group_simultaneous_events(sorted_events)
@@ -122,7 +123,8 @@ def create_narrative_from_trace(trace_events):
         prev_time = group.timestamp # Sposta l'ancora
         
     return "\n\n".join(narrative_paragraphs)
-\end{verbatim}
+
+\end{minted}
 
 \section{Architettura del Modello e Limitazioni dei BERT Clinici}
 Alla base del sistema di previsione giace \texttt{bert-base-uncased}, un Large Language Model reso disponibile pubblicamente sulla piattaforma HuggingFace. Questo Transformer, limitato alla componente Encoder, viene sottoposto a Fine Tuning aggiungendo al termine dell'architettura standard una testa di classificazione (\textit{classification head}) volta a predire la natura binaria del problema: degenza normale (sotto i 20 giorni) contro degenza critica (uguale o superiore a 20 giorni).
