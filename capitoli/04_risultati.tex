@@ -213,3 +213,29 @@ Il potenziale di questa disaggregazione lessicale è drastico e restituisce isto
     \label{fig:heatmap}
 \end{figure}
 \FloatBarrier
+
+\section{Fattibilità Computazionale e Costi di Deployment}
+Per valutare la concreta adozione del framework in un ambiente di produzione clinico (deployment aziendale), è stato condotto uno studio parallelo sull'hardware a disposizione e l'investimento di \textit{runtime}. Le prove sono state misurate impiegando un nodo composto da una singola GPU Nvidia RTX 4090, processore AMD Ryzen 9 5900X (12 core, 24 thread) e 64GB di memoria RAM.
+
+La complessità computazionale asintotica della fase di calcolo e di \textit{fine-tuning} incarna la classica topologia delle architetture Transformer. Semplificandone le componenti in base all'architettura interna, risulta esprimibile come:
+\begin{equation}
+\mathcal{O}(L^2 \cdot H + L \cdot H^2)
+\end{equation}
+dove $L$ (impostato a $512$ direttamente da Google) riflette la lunghezza massimale della traccia di log passata alla meccanica di \textit{self-attention}, mentre $H$ ($768$ dimensioni in \texttt{bert-base-uncased}) ingombra il computo relativo al layer denso di \textit{feed-forward}.
+
+Al netto del pre-training linguistico intrinseco, lo scoglio di computazione primario per il \textit{deployment} si insinua storicamente nell'innesco degli algoritmi iterativi post-hoc, quali gli \textit{Integrated Gradients}. La complessità estrattiva per l'architettura elaborata è fedelmente approssimabile in:
+\begin{equation}
+\mathcal{O}(N \cdot K \cdot T \cdot L \cdot H^2)
+\end{equation}
+dove l'infrastruttura attraversa un bacino di popolarità pari a $N=1109$ campioni in log, processandoli lungo $K=2$ direttrici di estrazione dicotomiche avvalendosi attivamente di un delta fine pari a $T=1500$ steps interpolari. Questi vettori decadranno come poc'anzi sui rami attenzionali base della rete ($L$ ed $H$).
+
+A fronte di questi scenari computazionali formalmente sfidanti, a livello empirico le metriche \textit{wall-clock} registrate sui server in fase sperimentale si sono rivelate altamente compatibili con una pipeline aziendale agile:
+\begin{itemize}
+    \item \textbf{Generazione delle storie (Parsing XES testuale):} 1 minuto.
+    \item \textbf{Fine-Tuning di BERT (su 5 epoche d'addestramento):} 6 minuti e 30 secondi.
+    \item \textbf{Estrazione IG estesa (Analisi completa su 1109 tracce loggate):} 81 minuti e 16 secondi.
+\end{itemize}
+
+Questi riscontri temporali sono peraltro apparsi speculari ed invariantivi trasversalmente a tutti gli approcci di embedding empiricamente studiati a parità di dataset. 
+
+Processare analiticamente la degenza ospedaliera e l'impatto clinico interpretato per più di mille pazienti in attesa dimissionaria richiede circa 80 minuti di \textit{overhead}. L'utilizzo differito di tali logiche garantisce all'ecosistema \textit{TEXLOS} un'immediata valenza direzionale. In un framework real-world integrato ad un ospedale, innescando l'esportazione automatizzata in asincrono al termine della fascia notturna tramite un trigger temporizzato sul database asincrono o su istanze \textit{cloud ad-hoc}, è possibile consegnare le liste di monitoraggio priorizzato ed i corrispondenti grafici d'ispezione al *case manager* e ai direttori dipartimentali ad inizio mattinata, preservando i reparti dall'acquisto di hardware di calcolo live sproporzionato ed avvalorando drasticamente i benefici assistenziali attesi all'introduzione empirica.
