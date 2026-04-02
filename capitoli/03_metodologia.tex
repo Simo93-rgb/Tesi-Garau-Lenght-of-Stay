@@ -19,7 +19,7 @@ Si rileva contestualmente l'ingente sbilanciamento delle classi, cardine della s
 \end{figure}
 \FloatBarrier
 
-La natura sequenziale del \textit{Length of Stay} giustifica una rigorosa ponderazione della magnitudo intrinseca per traccia (Figura \ref{fig:actions_distribution}). Il conteggio formale delle azioni per paziente si attesta su una media globale di 12.92, mitigata e più centrata da una mediana fissata a 9.00 atti censiti. Questa forte asimmetria destra (\textit{right-skewness}) rivela una profonda dicotomia nei flussi di cura: sebbene l'amigdala della distribuzione si spenga attorno a percorsi veloci e con rapide dimissioni, esiste una marcata e impattante ``lunga coda'' (\textit{long tail}) di pazienti complessi e critici che richiamano sistematicamente a sé decine o centinaia di re-interazioni ed esami.
+La natura sequenziale del \textit{Length of Stay} giustifica una rigorosa ponderazione della magnitudo intrinseca per traccia (Figura \ref{fig:actions_distribution}). Il conteggio formale delle azioni per paziente si attesta su una media globale di 12.92, mitigata e più centrata da una mediana fissata a 9.00 atti censiti. Questa forte asimmetria destra (\textit{right-skewness}) rivela una profonda dicotomia nei flussi di cura: sebbene la \textbf{massa principale} della distribuzione si concentri attorno a percorsi veloci e con rapide dimissioni, esiste una marcata e impattante ``lunga coda'' (\textit{long tail}) di pazienti complessi e critici che richiamano sistematicamente a sé decine o centinaia di re-interazioni ed esami.
 
 \begin{figure}[htbp]
     \centering
@@ -29,7 +29,7 @@ La natura sequenziale del \textit{Length of Stay} giustifica una rigorosa ponder
 \end{figure}
 \FloatBarrier
 
-Tale eterogeneità di azioni decolla definitivamente incrociando i flussi con l'esito di classe (Figura \ref{fig:class_quantity_boxplot}): appare nettissimo il divario tra i cluster, poiché la classe 1 (long-LOS) detiene tracciati mediani densissimi e spaventosamente più stratificati rispetto ai degenti a basso LOS. Approvvigionarsi di questo spunto speculativo è essenziale per ratificare sul nascere l'adozione dell'architettura iterativa estesa come BERT. Una classica catena deterministica frammenterebbe e disperderebbe i propri cicli dinanzi a tracce massicce, laddove solo le architetture guidate da parallela \textit{Self-Attention} garantiscono di ingerire in un'unica presa le dipendenze cronologiche complesse che avvolgono centinaia di passi ospedalieri.
+Tale eterogeneità di azioni decolla definitivamente incrociando i flussi con l'esito di classe (Figura \ref{fig:class_quantity_boxplot}): appare nettissimo il divario tra i cluster, poiché la classe 1 (long-LOS) detiene tracciati mediani densissimi e \textbf{sensibilmente} più stratificati rispetto ai degenti a basso LOS. Approvvigionarsi di questo spunto speculativo è essenziale per ratificare sul nascere l'adozione dell'architettura iterativa estesa come BERT. Una classica catena deterministica frammenterebbe e disperderebbe i propri cicli dinanzi a tracce massicce, laddove solo le architetture guidate da parallela \textit{Self-Attention} garantiscono di \textbf{elaborare simultaneamente} le dipendenze cronologiche complesse che avvolgono centinaia di passi ospedalieri.
 
 \begin{figure}[htbp]
     \centering
@@ -39,7 +39,7 @@ Tale eterogeneità di azioni decolla definitivamente incrociando i flussi con l'
 \end{figure}
 \FloatBarrier
 
-Ultima ma decisiva esplorazione del background grezzo consiste nell'isolare l'asimmetria delle frequenze a compartimenti rigidi (Figura \ref{fig:class_action_prevalence}). Affiorano per deduzione statistica primitiva vistosi gap nei vettori d'azione ad alta probabilità critica, portando all'apice allarmante eventi quali la "Visita Infettivologica", la "Radiografia Torace a Letto" o il fatidico "Posizionamento Catetere Venoso Centrale". 
+Ultima ma decisiva esplorazione del background grezzo consiste nell'isolare l'asimmetria delle frequenze a compartimenti rigidi (Figura \ref{fig:class_action_prevalence}). Affiorano per deduzione statistica primitiva vistosi gap nei vettori d'azione ad alta probabilità critica, portando all'apice allarmante eventi quali la "Visita Infettivologica", la "Radiografia Torace a Letto" o il \textbf{critico} "Posizionamento Catetere Venoso Centrale". 
 Ancorché preliminari, mere proiezioni che un'EDA limitata esprime e quantifica a mano senza alcuna causazione logica interna fra loro, questi indizi preparano l'anticipazione teoretica. Il Transformer, in fase di training, non leggerà questo istogramma: apprenderà induttivamente rintracciando ed attribuendo importanza predittiva in cieco proprio verso snodi clinici equivalenti; quest'operazione di decostruzione avverrà esplicitata in output nel successivo Capitolo \ref{ch:risultati} a mezzo degli ancoraggi esplicativi XAI offerti dagli Integrated Gradients.
 
 \subsection{Approcci e Formattazione degli Embedding}
@@ -68,7 +68,7 @@ Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici el
 }
 \end{verbatim}
 
-    \item \textbf{Storytelling in linguaggio naturale:} L'approccio finale, che costituisce il core metodologico del progetto TEXLOS \cite{texlos2026} e che è stato preferito ai precedenti, si rifà al pionieristico lavoro di traduzione semantica dei log del progetto LEGOLAS \cite{PASQUADIBISCEGLIE2025128224}. Anziché nutrire il classificatore con una combinazione mista di vettori numerici e codici, gli eventi e i vincoli cronologici logici della traccia sono tradotti letteralmente in frasi inglesi strutturate grammaticalmente, producendo interi paragrafi coerenti narranti il percorso diagnostico/terapeutico di ciascun paziente.
+    \item \textbf{Storytelling in linguaggio naturale:} L'approccio finale, che costituisce il core metodologico del progetto TEXLOS \cite{texlos2026} e che è stato preferito ai precedenti, si rifà al pionieristico lavoro di traduzione semantica dei log del progetto LEGOLAS \cite{PASQUADIBISCEGLIE2025128224}. Anziché \textbf{alimentare} il classificatore con una combinazione mista di vettori numerici e codici, gli eventi e i vincoli cronologici logici della traccia sono tradotti letteralmente in frasi inglesi strutturate grammaticalmente, producendo interi paragrafi coerenti narranti il percorso diagnostico/terapeutico di ciascun paziente.
 \begin{verbatim}
 {"case_id": "5870415", 
  "story": "The patient, 87 years old, underwent a series of examinations and 
@@ -81,6 +81,48 @@ After 178,980 seconds, CT of the skull was performed.",
 }
 \end{verbatim}
 \end{enumerate}
+
+\subsection{Dettagli Implementativi dell'Algoritmo di Storytelling}
+Per colmare la distanza che intercorre tra i log estratti in formato grezzo e i testi discorsivi forniti in addestramento, è stata sviluppata un'infrastruttura di \textit{parsing} ed iniezione in linguaggio Python. Dal punto di vista informatico, il processo si divide in due fasi computazionali: la strutturazione in memoria del file XES e la generazione cronologica della storia narrata. 
+
+Nella prima fase entra in gioco il modulo \texttt{xes\_parser.py}. Affrontando l'ingente volume di eventi clinici asincroni tipici di un'analisi di Process Mining, l'algoritmo si destreggia tra la libreria per l'ingestione dei log (\texttt{pm4py}) e le più ottimali e leggere architetture dati di \texttt{pandas}. Quest'ultimo processa massivamente il dataset suddividendo mediante \textit{groupby} e parallelismi nativi le righe afferenti ai medesimi pazienti; si procede poi convertendo in formato standard i \textit{timestamp} (le date d'esecuzione dell'atto medico), le stringhe degli attori coinvolti ed instradando così ogni frammento cronologico entro uno strato informativo solido (oggetto \textit{PatientTrace}).  
+
+La fase autoriale vera e propria è governata dalla classe \texttt{StoryGenerator} (all'interno dello script \texttt{story\_generator.py}). Le specifiche di traduzione che intercettano queste \textit{trace} vertono su tre stringenti requisiti ingegneristici:
+\begin{itemize}
+    \item \textbf{Gestione del Tempo (Time Deltas):} L'evoluzione clinica viene misurata estraendo rigorosamente il \textit{delta temporale in secondi} che separa l'azione attuale dalla precedente operazione registrata. Questo gap continuo viene iniettato nel template e calcolato esplicitamente mediante un blando \textit{parsing} aritmetico (\texttt{current\_time - prev\_time}), oggettivando la scansione temporale. Nessuna approssimazione logica interviene nel testo finale; i secondi marcano senza preconcetti le tempistiche di risposta dei triage o la dilatazione cronica della degenza (si passa da "0 secondi" per l'esordio iniziale, a svariate centinaia di migliaia di secondi per tac e risonanze d'esito fatte la settimana d'uscita).
+    \item \textbf{Gestione degli Eventi Simultanei:} Non è inusuale, nei processi su scala giornaliera densi come in ospedale, rilevare molteplici interazioni registrate col medesimo identico \textit{timestamp}. Un esempio classico si verifica con batterie di check-up del sangue incodificate alla stessa ora informatica dal personale. Per evitare grave ridondanza lessicale che sovraccaricherebbe indebitamente l'asse d'attenzione di BERT con frasi ripetute, il generatore intercetta internamente gli aggregati (tramite la funzione \texttt{\_group\_simultaneous\_events}), fondendoli all'interno di specifici \textit{bullet points} o paragrafi discorsivi compatti nel seguente formato: \textit{"After $X$ seconds, the following examinations were performed simultaneously: Action A, and Action B"}.
+    \item \textbf{Indipendenza dal Protocollo di Triage:} In questo assunto ideologico e programmatico risiede la marcata differenza con l'originario e nobile lavoro LEGOLAS. L'architettura antesignana era pensata, come ben esplicitato nel suo file template originario statico (\texttt{skeleton.py}), al fine di interpolare un set limitato e assai rigido di misurazioni fisiologiche assunte nei reparti chiusi di Pronto Soccorso, lavorando colmando variabili standard d'emergenza precompilate (come ad esempio frequenza respiratoria, temperatura corporea, scala del dolore, trasportabilità empirica del paziente). Al contrario, nel setup universale di TEXLOS i pazienti viaggiano attraverso flussi di innumerevole portata procedurale e verso decine di sezioni nosocomiali disparate dove i medici interrogano esami diametralmente spuri e privi di una sintassi pregressa da manuale matematico. Il generatore nostro sopperisce a tale carenza tramite dizionari interni flessibili e \textbf{regole di template matching dinamiche} agnostiche a monte, concepite unicamente per incollare la tassonomia enciclopedica medica agli snodi discorsivi del transformer, non vincolando l'algoritmo alla saturazione logica per specifici sensori numerici ospedalieri.
+\end{itemize}
+
+A scopo esemplificativo, il seguente frammento di pseudo-codice descrive la routine adoperata dal software in \texttt{story\_generator.py} per snellire testualmente (\textit{trimming} sintattico) il sovraffolamento degli stadi simultanei ed iniettare i \textit{time-delta} per una traccia degenziale prima dell'invio in NLP ad estrapolazione avvenuta:
+
+\begin{verbatim}
+def create_narrative_from_trace(trace_events):
+    sorted_events = sort_by_timestamp(trace_events)
+    grouped_events = group_simultaneous_events(sorted_events)
+    
+    narrative_paragraphs = []
+    prev_time = grouped_events[0].timestamp
+    
+    for group in grouped_events:
+        time_elapsed = calculate_seconds_diff(prev_time, group.timestamp)
+        
+        if len(group) == 1:
+            # Singolo evento testuale formattato
+            activity_desc = apply_medical_template(group[0].activity)
+            text = f"After {time_elapsed} seconds, {activity_desc} was performed."
+        else:
+            # Piu' azioni collassate per alleggerimento dell'Attention
+            activities = [apply_medical_template(e.activity) for e in group]
+            concat_acts = join_with_commas_and(activities)
+            text = f"After {time_elapsed} seconds, the following examinations " \
+                   f"were performed simultaneously: {concat_acts}."
+                   
+        narrative_paragraphs.append(text)
+        prev_time = group.timestamp # Sposta l'ancora
+        
+    return "\n\n".join(narrative_paragraphs)
+\end{verbatim}
 
 \section{Architettura del Modello e Limitazioni dei BERT Clinici}
 Alla base del sistema di previsione giace \texttt{bert-base-uncased}, un Large Language Model reso disponibile pubblicamente sulla piattaforma HuggingFace. Questo Transformer, limitato alla componente Encoder, viene sottoposto a Fine Tuning aggiungendo al termine dell'architettura standard una testa di classificazione (\textit{classification head}) volta a predire la natura binaria del problema: degenza normale (sotto i 20 giorni) contro degenza critica (uguale o superiore a 20 giorni).
@@ -153,6 +195,6 @@ L'impostazione degli iperparametri del modello neurale è sfociata da un process
 \section{Indagine Esplorativa: Data Augmentation con LLM}
 Nel tentativo di robustire l'astrazione di BERT sulla classe minoritaria (long-LOS), si è tentato un originale esperimento di estensione del dataset (\textit{Data Augmentation}) avvalendosi per la prima volta dell'intelligenza generativa degli attuali LLM.
 
-La pipeline esplorativa prevedeva l'impiego locale di modelli generativi allo stato dell'arte, nello specifico \texttt{phi-4}, \texttt{gemma-3} utilizzati mediante \texttt{Ollama}, strumento open source per l'esecuzione di LLM in locale. Per inibire pericolose allucinazioni mediche e circoscrivere l'effetto stocastico, il parametro di Temperatura è stato impostato prossimo allo zero ($T \approx 0.1$). Alle reti veniva fornita una traccia reale (estratta da un parser per log XES), con l'istruzione di creare o rigenerare varianti testuali grammaticalmente dissimili ma clinicamente equivalenti per espandere artificialmente le scarse occorrenze della classe critica.
+La pipeline esplorativa prevedeva l'impiego locale di modelli generativi allo stato dell'arte, nello specifico \texttt{phi4:14b}, \texttt{gemma3:27b} utilizzati mediante \texttt{Ollama}, strumento open source per l'esecuzione di LLM in locale. Per inibire pericolose allucinazioni mediche e circoscrivere l'effetto stocastico, il parametro di Temperatura è stato impostato prossimo allo zero ($T \approx 0.1$). Alle reti veniva fornita una traccia reale (estratta da un parser per log XES), con l'istruzione di creare o rigenerare varianti testuali grammaticalmente dissimili ma clinicamente equivalenti per espandere artificialmente le scarse occorrenze della classe critica.
 
 Nonostante la supervisione semantica e il rigore dell'indagine, i risultati empirici hanno inequivocabilmente sancito il fallimento dell'ipotesi: l'inserimento dello \textit{Storytelling} sintetico nel processo di \textit{fine-tuning} ha paradossalmente deteriorato le metriche, degradando la \textit{Balanced Accuracy} e le curve ROC. Il calo del potere discriminatorio di BERT evidenzia come, in domini ad alta sensibilità temporale come le sequenze ospedaliere, lievi fluttuazioni sintattiche indotte dall'IA generativa sfalsino irreparabilmente i vettori di attenzione attesi, dimostrando che tali variazioni formali non rispecchiano fedelmente il pattern intrinseco (\textit{ground truth}) reale della degenza. A seguito di questa consapevolezza negativa, l'embedding finale è rimasto solidamente ancorato al puro \textit{parsing} scriptato deterministico sui log diretti, e la data augmentation sintetica è stata scartata dalla pipeline definitiva.
