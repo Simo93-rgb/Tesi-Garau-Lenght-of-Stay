@@ -8,13 +8,6 @@ La validazione del modello predittivo \texttt{bert-base-uncased}, architettato s
 
 Al termine del processo di hyperparameter tuning e addestramento supervisionato, la metrica chiave di valutazione, la \textbf{Balanced Accuracy}, si è assestata su valori di circa l'\textbf{88\%}. Questo punteggio assume particolare pregio considerando il gravoso sbilanciamento delle classi in input: la Balanced Accuracy, di fatto media aritmetica delle accuratezze (Sensibilità e Specificità) sulle due classi in esame (Casi normali vs Casi patologici), testimonia che il classificatore ha evitato di \textbf{collassare sulla classe maggioritaria} (la degenza breve). Un ruolo critico nel conseguimento di quest'alta soglia sensibile è ascrivibile all'adozione differenziale e decisa della Focal Loss, che dinamicamente forzava il focus iterativo di addestramento primariamente sulle tracce rare a LOS anomalo, contribuendo a limitare i falsi negativi e mitigando il bias di predizione introdotto dagli esemplari maggioritari.
 
-% PLACEHOLDER CAPITOLO 04 - PARAGRAFO 4.1 - CURVA LOSS
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/train_val_loss.png}
-\caption{Curva di apprendimento (Training vs Validation Loss). L'andamento mostra una discesa costante della \textit{training loss}, mentre la \textit{validation loss} raggiunge il suo minimo all'epoca 10. Nelle epoche successive la curva di validazione inizia a divergere, indicando l'innesco dell'\textit{overfitting}. Grazie alla tecnica dell'\textit{early stopping} (impostata con un $\Delta$ minimo di $1\times 10^{-3}$ su una \textit{patience} di 5 epoche), il training si è interrotto all'epoca 15; i pesi del modello sono stati quindi ripristinati all'ottimo dell'epoca 10, garantendo la massima capacità di generalizzazione sui dati non visti.}    \label{fig:loss_curve}
-\end{figure}
-\FloatBarrier
 \section{Confronto Prestazionale degli Embedding}
 Prima di eleggere lo \textit{Storytelling} come soluzione definitiva, il modello è stato regolarmente addestrato e testato sulle altre due formulazioni di embedding discusse (Coppie Azione-Token Temporale e Array Concatenati). La Tabella \ref{tab:metrics_comparison} riassume il confronto sulle principali metriche di classificazione binaria. Lo Storytelling ha garantito un balzo in avanti, specialmente nella metrica chiave di \textit{Balanced Accuracy}.
 

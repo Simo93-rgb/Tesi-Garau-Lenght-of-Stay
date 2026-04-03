@@ -203,8 +203,20 @@ L'impostazione degli iperparametri del modello neurale è sfociata da un process
     \item Un minuzioso \textit{tuning manuale} a posteriori. Affinché i risultati non scivolassero in asimmetrie dimensionali non volute, le alterazioni manuali degli intervalli innescati da Optuna si sono preoccupate di preservare costanti le "proporzioni architetturali" auree del transformer, quali i rapporti intrinseci tra hidden layers, attention heads e scaling rate dello stack.
 \end{itemize}
 
+\subsection{Convergenza del Modello e Early Stopping}
+A seguito del setup definito, l'addestramento della configurazione finale \texttt{bert-base-uncased} ha evidenziato un comportamento stabile. Come illustrato nella Figura \ref{fig:loss_curve}, l'andamento mostra una discesa costante della \textit{training loss}, mentre la \textit{validation loss} raggiunge il suo minimo all'epoca 10. Nelle epoche successive la curva di validazione inizia a divergere, indicando l'innesco dell'\textit{overfitting}. Grazie alla tecnica dell'\textit{early stopping} (impostata con un $\Delta$ minimo di $1\times 10^{-3}$ su una \textit{patience} di 5 epoche), il training si è interrotto all'epoca 15; i pesi del modello sono stati quindi ripristinati all'ottimo dell'epoca 10, garantendo la massima capacità di generalizzazione sui dati non visti per la successiva fase di test.
+
+% STORIA LOSS
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/train_val_loss.png}
+    \caption{Curva di apprendimento (Training vs Validation Loss) del modello definitivo durante il processo di \textit{fine-tuning}.}
+    \label{fig:loss_curve}
+\end{figure}
+\FloatBarrier
+
 \section{Indagine Esplorativa: Data Augmentation con LLM}
-Nel tentativo di robustire l'astrazione di BERT sulla classe minoritaria (long-LOS), si è tentato un originale esperimento di estensione del dataset (\textit{Data Augmentation}) avvalendosi dell'intelligenza generativa degli attuali LLM.
+Nel tentativo di robustire l'astrazione di BERT sulla classe minoritaria (long-LOS), si è tentato un originale esperimento di estensione del dataset (\textit{Data Augmentation}) avvalendosi dell'intelligenza generativa degli attuali LLM (encoder-only).
 
 La pipeline esplorativa prevedeva l'impiego locale di modelli generativi allo stato dell'arte, nello specifico \texttt{phi4:14b} e \texttt{nous-hermes2:34b}, eseguiti tramite l'ambiente open-source \texttt{Ollama}. Per inibire le allucinazioni e circoscrivere l'effusione creativa dell'esposizione testuale, la \textit{Temperature} è stata fissata al minimo rigido ($T=0.0$). 
 
