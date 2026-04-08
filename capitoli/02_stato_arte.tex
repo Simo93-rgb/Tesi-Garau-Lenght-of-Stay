@@ -19,7 +19,7 @@ Un fondamentale cambio di paradigma avviene nel 2017 con l'introduzione dell'arc
 \begin{itemize}
     \item \textbf{Encoder-only (es. BERT)}: conservano solo la componente in grado di leggere l'intera sequenza in modo bidirezionale. Sono eccellenti per task di classificazione, analisi del sentiment o comprensione del testo, poiché possono catturare il contesto sia a destra che a sinistra di un token senza restrizioni temporali.
     \item \textbf{Decoder-only (es. GPT)}: sono modelli auto-regressivi progettati per generare testo prevedendo il token successivo. Leggono la sequenza in senso unidirezionale, mascherando i token futuri.
-    \item \textbf{Encoder-Decoder (es. T5, BART)}: utilizzano entrambe le componenti per task di tipo sequence-to-sequence, come la traduzione automatica.
+    \item \textbf{Encoder-Decoder (es. BART)}: utilizzano entrambe le componenti per task di tipo sequence-to-sequence, come la traduzione automatica.
 \end{itemize}
 
 In questo lavoro di tesi, la scelta è ricaduta su un approccio \textit{Encoder-only} poiché lo scopo primario non è generare nuove tracce cliniche, ma classificarle e comprenderne le dinamiche cronologiche globali, traendo massimo vantaggio dal contesto bidirezionale intero.
