@@ -56,7 +56,53 @@ Poiché il task ingegneristico mira strettamente ad accoppiare eventi clinici el
  "label_id": 0
 }
 \end{minted}
-    
+
+    La scelta delle soglie di discretizzazione non è arbitraria ma \textit{data-driven}: le categorie sono state definite analizzando la distribuzione empirica dei delta temporali nel dataset, riportata in Tabella~\ref{tab:time_delta_distribution}. La distribuzione rivela una struttura bimodale con la grande maggioranza degli intervalli concentrata entro la finestra dei 7 giorni (97.0\%), e una coda esigua di eventi molto dilazionati. Le soglie sono state quindi fissate sui breakpoint clinici naturali --- un'ora, un giorno, sette giorni e trenta giorni --- che separano fasi di cura operativamente distinte: accertamenti rapidi, degenza standard, ricovero prolungato e cronicità.
+
+    \begin{table}[htbp]
+        \centering
+        \resizebox{\textwidth}{!}{%
+        \begin{tabular}{|l|c|r|r|}
+            \hline
+            \textbf{Token} & \textbf{Intervallo} & \textbf{Conteggio} & \textbf{Freq.} \\
+            \hline
+            \texttt{\_TIME\_DELTA\_START\_}      & $\Delta = 0$ s                         & 5\,842  &  6.9\% \\
+            \texttt{\_TIME\_DELTA\_IMMEDIATE\_}  & $0 < \Delta \le 1\text{h}$             & 19\,456 & 23.1\% \\
+            \texttt{\_TIME\_DELTA\_SHORT\_}      & $1\text{h} < \Delta \le 1\text{gg}$   & 29\,887 & 35.4\% \\
+            \texttt{\_TIME\_DELTA\_MEDIUM\_}     & $1\text{gg} < \Delta \le 7\text{gg}$  & 26\,649 & 31.6\% \\
+            \texttt{\_TIME\_DELTA\_LONG\_}       & $7\text{gg} < \Delta \le 30\text{gg}$ &  2\,296 &  2.7\% \\
+            \texttt{\_TIME\_DELTA\_VERY\_LONG\_} & $\Delta > 30\text{gg}$                 &    233  &  0.3\% \\
+            \hline
+            \multicolumn{2}{|l|}{\textbf{Totale delta calcolati}} & 84\,363 & 100\% \\
+            \hline
+        \end{tabular}%
+        }
+        \caption{Distribuzione empirica dei delta temporali nel dataset e corrispondente token di discretizzazione assegnato. Il totale è inferiore agli 88.115 eventi grezzi poiché il primo evento di ciascuna traccia non possiede un evento precedente da cui calcolare il delta.}
+        \label{tab:time_delta_distribution}
+    \end{table}
+    \FloatBarrier
+
+    La funzione \texttt{categorize\_time\_delta\_vectorized}, implementata con \texttt{numpy} per un processing completamente vettorializzato sull'intero dataset, traduce i delta continui nei token speciali secondo questa logica:
+
+\begin{minted}[fontsize=\small]{python}
+def categorize_time_delta_vectorized(deltas):
+    conditions = [
+        deltas == 0,                               # Delta nullo: eventi simultanei
+        (deltas > 0) & (deltas <= 3600),           # 0-1 ora:   Immediato
+        (deltas > 3600) & (deltas <= 86400),       # 1h-1gg:    Breve
+        (deltas > 86400) & (deltas <= 604800),     # 1-7gg:     Medio
+        (deltas > 604800) & (deltas <= 2592000),   # 7-30gg:    Lungo
+    ]
+    choices = [
+        '_TIME_DELTA_START_',       # delta = 0
+        '_TIME_DELTA_IMMEDIATE_',   # 0 < delta <= 1h
+        '_TIME_DELTA_SHORT_',       # 1h < delta <= 1gg
+        '_TIME_DELTA_MEDIUM_',      # 1gg < delta <= 7gg
+        '_TIME_DELTA_LONG_',        # 7gg < delta <= 30gg
+    ]
+    return np.select(conditions, choices, default='_TIME_DELTA_VERY_LONG_')
+\end{minted}
+
     \item \textbf{Array concatenati (Azioni + Distanze numeriche):} Questa seconda forma di preprocessing costruisce l'embedding affiancando due array distinti: uno contenente esclusivamente la sequenza testuale delle azioni cliniche e un array parallelo numerico (\textit{float}) esprimente la distanza in secondi dall'evento precedente. Un esempio:
 \begin{minted}[fontsize=\small]{json}
 {"case_id": "5870415", 
