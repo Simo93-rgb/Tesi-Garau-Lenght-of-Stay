@@ -62,22 +62,18 @@
 \setbeamerfont{frametitle}{size=\normalsize, series=\bfseries}
 \setbeamerfont{block title}{series=\bfseries}
 
-% Rimuove icone di navigazione
-\setbeamertemplate{navigation symbols}{}
-
-% Numerazione slide: X / N
+% Footer personalizzato:
 \setbeamertemplate{footline}{%
   \leavevmode%
-  \hbox{%
-    \begin{beamercolorbox}[wd=0.70\paperwidth, ht=2.5ex, dp=1ex, leftskip=2mm]{normal text}%
-      \usebeamerfont{footline}\insertshorttitle
-    \end{beamercolorbox}%
-    \begin{beamercolorbox}[wd=0.30\paperwidth, ht=2.5ex, dp=1ex, rightskip=2mm, right]{normal text}%
-      \usebeamerfont{footline}\insertframenumber{} / \inserttotalframenumber
-    \end{beamercolorbox}%
-  }%
-  \vskip0pt%
+  \begin{beamercolorbox}[wd=\paperwidth, leftskip=0.3cm, rightskip=0.3cm, dp=1.5ex, ht=2.5ex]{page number in head/foot}%
+    \usebeamerfont{page number in head/foot}%
+    {\tiny \insertshorttitle}%
+    \hfill%
+    {\tiny \insertframenumber\,/\,\inserttotalframenumber}%
+  \end{beamercolorbox}%
+  \vspace*{0.1cm} % Un piccolo margine inferiore per non tagliare le lettere (dp)
 }
+\setbeamercolor{page number in head/foot}{fg=darktext!55, bg=lightbg}
 
 % ── Metadati ─────────────────────────────────────────────────
 \title{Explainable AI in Sanità}
@@ -454,6 +450,8 @@
 
     \begin{column}{0.45\textwidth}
       \centering
+      % scalebox: il diagramma tikz è ~6.8cm, la colonna ~5.7cm in 16:9
+      \scalebox{0.78}{%
       \begin{tikzpicture}[
         node distance=1.5cm,
         box/.style={rectangle, draw=primary!80, fill=primary!8!lightbg,
@@ -487,7 +485,7 @@
         \draw[arr] (card.south) -- (fcardio.north west);
         \draw[arr] (iolo.south) -- (fcardio.north east);
         \draw[arr] (vis.south)  -- (fvis.north);
-      \end{tikzpicture}
+      \end{tikzpicture}}
       \vspace{0.2em}
       {\small\itshape Ricomposizione ``Cardiology visit''.}
     \end{column}
