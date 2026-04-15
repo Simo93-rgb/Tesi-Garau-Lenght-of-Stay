@@ -7,6 +7,9 @@ assets/
 # img/ (Sbloccato per tracking con Git-LFS)
 .vscode/
 *.pdf
+# Output PDF tracciati con Git LFS
+!main.pdf
+!presentation/slide_deck.pdf
 *.gz
 *.bbl
 

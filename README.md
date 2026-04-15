@@ -1,70 +1,116 @@
 # Tesi di Laurea Magistrale
 
-**Titolo:** Explainable AI in Sanità: Storytelling e Modelli Transformer per l’Ottimizzazione del Length of Stay
-
+**Titolo:** Explainable AI in Sanità: Storytelling e Modelli Transformer per l'Ottimizzazione del Length of Stay
 
 **Autore:** Simone Garau  
 **Relatore:** Prof. Giorgio Leonardi  
 **Anno Accademico:** 2024/2025
 
+---
+
 ## Compilazione
 
-Questo documento usa `fontspec` e `unicode-math`, quindi **deve essere compilato con XeLaTeX o LuaLaTeX** (non `pdflatex`).
+Il documento è compilato con **pdfLaTeX** (TeX Live 2026/Arch Linux).
+
+> ⚠️ Il pacchetto `minted` (usato per il syntax highlighting del codice) richiede il flag `-shell-escape` ad ogni invocazione di `pdflatex`.
 
 ### Prerequisiti
 
-- **TeX Live** (o MikTeX su Windows) aggiornato
-- Font **Libertinus Serif** e **Libertinus Math** installate sul sistema
-  - Su Debian/Ubuntu: `sudo apt install fonts-libertinus`
-  - Su Fedora/RHEL: `sudo dnf install libertinus-fonts`
-  - Su macOS (con Homebrew): `brew install --cask font-libertinus`
+- **TeX Live** installato (su CachyOS/Arch Linux: `sudo pacman -S texlive-meta texlive-langitalian`)
+- **Python** con **Pygments** installato (richiesto da `minted`):
+  ```bash
+  pip install pygments
+  ```
+- **Biber** o **BibTeX** per la bibliografia (incluso in `texlive-meta`)
 
 ### Comandi di compilazione
 
-Nella root del repository, esegui:
+Nella root del repository, esegui la sequenza completa:
 
 ```bash
-xelatex -interaction=nonstopmode main.tex
+pdflatex -shell-escape -interaction=nonstopmode main.tex
 bibtex main
-xelatex -interaction=nonstopmode main.tex
-xelatex -interaction=nonstopmode main.tex
+pdflatex -shell-escape -interaction=nonstopmode main.tex
+pdflatex -shell-escape -interaction=nonstopmode main.tex
 ```
 
-**Oppure**, se hai `latexmk` installato:
+**Oppure**, con `latexmk` (consigliato, gestisce automaticamente i passaggi):
 
 ```bash
-latexmk -xelatex -interaction=nonstopmode main.tex
+latexmk -pdf -shell-escape -interaction=nonstopmode main.tex
 ```
 
-**Nota:** se le font Libertinus non sono installate, puoi modificare `main.tex` per usare font di sistema disponibili (ad esempio `\setmainfont{Linux Libertine O}` o `\setmainfont{DejaVu Serif}`).
+Per pulire i file ausiliari generati:
+
+```bash
+latexmk -c
+```
+
+### LaTeX Workshop (VS Code / Cursor / Antigravity)
+
+Se usi LaTeX Workshop, assicurati che la ricetta attiva usi `pdflatex` con `-shell-escape`. Puoi aggiungere nel tuo `settings.json` utente:
+
+```json
+"latex-workshop.latex.tools": [
+  {
+    "name": "pdflatex",
+    "command": "pdflatex",
+    "args": [
+      "-shell-escape",
+      "-interaction=nonstopmode",
+      "-synctex=1",
+      "%DOC%"
+    ]
+  }
+]
+```
+
+---
 
 ## Struttura del progetto
 
 ```
 .
-├── main.tex           # File principale della tesi
-├── license.tex        # Dichiarazione licenza CC BY 4.0 (inclusa in main.tex)
-├── bibliografia.bib   # Database BibTeX con citazioni bibliografiche
-├── LICENSE            # Testo completo della licenza Creative Commons Attribution 4.0
-├── img/               # Cartella per immagini e figure
-│   └── logo_upo.jpg   # Logo dell'Università del Piemonte Orientale
-├── .vscode/           # Configurazione VS Code e LaTeX Workshop
-│   └── settings.json
-└── README.md          # Questo file
+├── main.tex                  # File principale della tesi
+├── abstract.tex              # Abstract
+├── appendici.tex             # Appendici (config hardware, software, hyperparameter tuning)
+├── license.tex               # Dichiarazione licenza CC BY 4.0
+├── ringraziamenti.tex        # Ringraziamenti
+├── bibliografia.bib          # Database BibTeX con le citazioni
+├── LICENSE                   # Testo completo della licenza Creative Commons Attribution 4.0
+├── capitoli/
+│   ├── 01_introduzione.tex
+│   ├── 02_stato_arte.tex
+│   ├── 03_metodologia.tex
+│   ├── 04_risultati.tex
+│   └── 05_conclusioni.tex
+├── assets/                   # Script Python della pipeline
+│   ├── action_aggregator.py  # Ricomposizione semantica dei sub-token (Step A + B)
+│   ├── ig_completeness.py    # Algoritmo adattivo Integrated Gradients
+│   └── hyperparameters.py    # Configurazione iperparametri Optuna
+├── presentation/
+│   └── slide_deck.tex        # Slide della presentazione (Beamer)
+├── img/                      # Figure e grafici della tesi
+│   └── logo_upo.jpg
+└── README.md                 # Questo file
 ```
+
+---
 
 ## Come aggiungere citazioni
 
-1. Apri `bibliografia.bib` e aggiungi le tue fonti seguendo gli esempi presenti
-2. Nel testo usa `\cite{chiave}` per citare (es: `\cite{esempio_libro}`)
-3. Salva il file: LaTeX Workshop compilerà automaticamente con la sequenza completa (xelatex → bibtex → xelatex × 2)
+1. Apri `bibliografia.bib` e aggiungi le fonti seguendo gli esempi presenti
+2. Nel testo usa `\cite{chiave}` (es: `\cite{vaswani2017attention}`)
+3. Dopo ogni modifica alla bibliografia, riesegui la sequenza completa di compilazione (pdflatex → bibtex → pdflatex × 2)
 
 Tipi di entry BibTeX supportati:
-- `@article` - Articoli di rivista
-- `@book` - Libri
-- `@inproceedings` - Atti di conferenze
-- `@phdthesis` - Tesi di dottorato/laurea
-- `@misc` - Siti web, report tecnici, preprint
+- `@article` — Articoli di rivista
+- `@book` — Libri
+- `@inproceedings` — Atti di conferenze
+- `@phdthesis` — Tesi di dottorato/laurea
+- `@misc` — Siti web, report tecnici, preprint
+
+---
 
 ## Licenza
 
@@ -75,14 +121,16 @@ Quest'opera è distribuita con licenza **Creative Commons Attribution 4.0 Intern
 - Adattare — remixare, trasformare e costruire sul materiale per qualsiasi scopo, anche commerciale
 
 **Alle seguenti condizioni:**
-- **Attribuzione** — Devi riconoscere una menzione di paternità adeguata, fornire un link alla licenza e indicare se sono state effettuate delle modifiche.
+- **Attribuzione** — Devi riconoscere la paternità dell'opera, fornire un link alla licenza e indicare se sono state effettuate modifiche.
 
 **Link alla licenza:**
-- Testo completo (legal code): https://creativecommons.org/licenses/by/4.0/legalcode
-- Riassunto leggibile (deed): https://creativecommons.org/licenses/by/4.0/
+- Testo completo: https://creativecommons.org/licenses/by/4.0/legalcode
+- Riassunto: https://creativecommons.org/licenses/by/4.0/
 
 **Esempio di attribuzione consigliata:**
-> Simone Garau, "Forecasting di Consumi Energetici nel Mercato Elettrico Italiano: un Confronto tra Modelli di Machine Learning e Deep Learning", Anno Accademico 2024/2025, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+> Simone Garau, "Explainable AI in Sanità: Storytelling e Modelli Transformer per l'Ottimizzazione del Length of Stay", Anno Accademico 2024/2025, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+
+---
 
 ## Contatti
 
