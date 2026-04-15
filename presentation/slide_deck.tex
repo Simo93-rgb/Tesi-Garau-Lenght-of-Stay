@@ -246,11 +246,11 @@
         \item 110M parametri, tokenizer WordPiece
         \item Perché non ClinicalBERT? \alert{Vocabulary mismatch}:\\
               nomenclature locali non standardizzate
-        \item Fine-tuning con Stratified 5-Fold CV
+        \item Setup (5-Fold CV): \texttt{lr}=$5\text{e-}5$, batch=22, early stopping epoca 10
       \end{itemize}
 
       \vspace{0.4em}
-      \begin{block}{Focal Loss — Formula}
+      \begin{block}{Focal Loss ($\gamma=2.0$, $\alpha=[0.25, 0.75]$)}
         \[
           FL(p_t) = -\alpha_t\,(1-p_t)^{\gamma}\,\log(p_t)
         \]
@@ -334,19 +334,19 @@
       \begin{alertblock}{Il Paradosso della Black-Box}
         Una rete neurale è un oracolo opaco: restituisce
         una probabilità, ma \alert{non spiega perché}.\\
-        In sanità questo è inaccettabile per il clinico.
+        In sanità questa opacità è inaccettabile.
       \end{alertblock}
 
       \textbf{Già disponibili in letteratura:}
       \begin{itemize}
-        \item Grad-CAM $\to$ progettato per CNN/immagini
-        \item Vanilla Gradient $\to$ soggetto a \textit{gradient shattering}
-        \item SmoothGrad / Blur IG $\to$ incompatibili con embedding discreti
+        \item Grad-CAM $\to$ solo per CNN/immagini
+        \item Vanilla Gradient $\to$ \textit{gradient shattering}
+        \item SmoothGrad / Blur IG $\to$ no embedding discreti
       \end{itemize}
 
-      \vspace{0.3em}
-      \textbf{Soluzione adottata:} \alert{Integrated Gradients (IG)}\\
-      — assiomaticamente verificabili, corretti per sequenze testuali.
+      \vspace{0.2em}
+      \textbf{Soluzione adotatta:} \alert{Integrated Gradients (IG)}\\
+      assiomaticamente verificabili per sequenze testuali.
     \end{column}
 
     \begin{column}{0.42\textwidth}
@@ -646,8 +646,7 @@
         (\textit{``to evaluate intracranial hemorrhages\ldots''}) o
         dettagli non nel DB (\textit{``with contrast medium''}).
 
-        Il rumore lessicale \alert{distorce l'attenzione} di BERT
-        sui delta temporali, degradando i risultati.
+        Il rumore lessicale \alert{distorce l'attenzione} di BERT, degradando i risultati.
       \end{alertblock}
     \end{column}
 
