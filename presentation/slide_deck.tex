@@ -123,14 +123,7 @@
         sovraccarico di letti, rischio nosocomiale, costi elevati.
       \end{block}
 
-      \vspace{0.4em}
-      \textbf{Il dataset:}
-      \begin{itemize}
-        \item 7.393 casi clinici unici
-        \item 88.115 eventi granulari
-        \item Solo \alert{809 ($\approx$11\%)} con LOS critico
-        \item Ospedale di Alessandria — 20 DRG
-      \end{itemize}
+
     \end{column}
 
     \begin{column}{0.45\textwidth}
@@ -338,14 +331,12 @@
     \begin{column}{0.55\textwidth}
       Il modello \textbf{funziona} — ma il medico deve \textbf{fidarsi}.
 
-      \vspace{0.5em}
       \begin{alertblock}{Il Paradosso della Black-Box}
         Una rete neurale è un oracolo opaco: restituisce
         una probabilità, ma \alert{non spiega perché}.\\
         In sanità questo è inaccettabile per il clinico.
       \end{alertblock}
 
-      \vspace{0.5em}
       \textbf{Già disponibili in letteratura:}
       \begin{itemize}
         \item Grad-CAM $\to$ progettato per CNN/immagini
@@ -391,12 +382,6 @@
         \alert{zero semantico} per i BERT embedding.\\
         Garantisce l'Assioma di Sensibilità.
       \end{block}
-
-      \vspace{0.3em}
-      {\footnotesize
-      \textbf{Convergenza adattiva:}
-      90\% dei campioni converge a $m{=}1500$ steps;\\
-      picchi fino a $m{=}5500$ per tracce molto lunghe.}
     \end{column}
 
     \begin{column}{0.42\textwidth}
@@ -410,12 +395,13 @@
         \textit{tutta} la differenza di output.
       \end{alertblock}
 
-      \vspace{0.5em}
+      \vspace{0.3em}
       \begin{exampleblock}{Ottimizzazione Hardware}
         \footnotesize
         Riemann Trapezoid vs Gauss-Legendre:\\
-        da \alert{15~s/campione} a \textbf{2.5~s/campione}\\
-        scaricando il calcolo sulla GPU RTX 4090.
+        da \alert{15~s/campione} a \textbf{2.5~s/campione}.\\
+        Inoltre, il \textbf{90\%} dei campioni converge ad\\
+        appena $m{=}1500$ steps di integrazione.
       \end{exampleblock}
     \end{column}
   \end{columns}
@@ -637,7 +623,7 @@
 
       \vspace{0.3em}
       \centering
-      \includegraphics[width=0.9\linewidth]{train_val_loss.png}
+      \includegraphics[width=0.7\linewidth]{train_val_loss.png}
       {\small\itshape Curva Training vs Validation Loss.}
     \end{column}
   \end{columns}
