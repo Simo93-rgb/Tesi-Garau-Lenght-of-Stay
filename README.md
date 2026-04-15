@@ -1,7 +1,6 @@
 # Tesi di Laurea Magistrale
 
-**Titolo:** Explainable AI per la classificazione dei pazienti: embedding narrativi e Integrated Gradients su BERT 
-**Titolo2:** Storytelling clinico con BERT: un approccio ispirato a LEGOLAS per l’identificazione delle azioni rilevanti nei tempi di dimissione ospedaliera 
+**Titolo:** Explainable AI in Sanità: Storytelling e Modelli Transformer per l’Ottimizzazione del Length of Stay
 
 
 **Autore:** Simone Garau  
