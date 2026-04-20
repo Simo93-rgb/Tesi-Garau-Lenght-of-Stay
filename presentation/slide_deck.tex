@@ -96,10 +96,10 @@
   \setbeamertemplate{footline}{}  % niente footer sul titolo
   \begin{frame}[noframenumbering]
     \begin{columns}[c]
-      \begin{column}{0.22\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{logo_upo.jpg}
-      \end{column}
+      % \begin{column}{0.22\textwidth}
+      %   \centering
+      %   \includegraphics[width=\linewidth]{logo_upo.jpg}
+      % \end{column}
       \begin{column}{0.76\textwidth}
         \titlepage
       \end{column}
@@ -386,44 +386,42 @@
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
       \textbf{Intuizione:} misurare il contributo di ogni token
-      integrando i gradienti lungo un percorso dalla
+      integrando i gradienti lungo un percorso logico dalla
       \alert{baseline} (assenza d'informazione) all'input reale.
 
       \vspace{0.4em}
-      \begin{block}{Formula Adattiva (Riemann Trapezoid)}
+      \begin{block}{Approssimazione dell'Integrale}
         \footnotesize
-        \[
-          IG_i^{\approx}(x) \coloneqq (x_i - x'_i) \times
-          \frac{1}{m}\sum_{k=1}^{m}
-          \frac{\partial F\!\left(x' + \tfrac{k}{m}(x-x')\right)}{\partial x_i}
-        \]
+        L'integrale continuo non è calcolabile su reti profonde.\\
+        Si utilizza un'approssimazione discreta a \textbf{$m$ step} 
+        (frazioni spaziali equidistanti tra baseline e input).
       \end{block}
 
-      \begin{block}{La Baseline}
-        $x' = $ vettore di token \texttt{[PAD]} (ID=0):
-        \alert{zero semantico} per i BERT embedding.\\
-        Garantisce l'Assioma di Sensibilità.
+      \begin{block}{La Baseline: Lo "Zero Semantico"}
+        \footnotesize
+        $x' = $ vettore di token \texttt{[PAD]} (ID=0).\\
+        Garantisce a BERT un punto d'origine privo di informazione 
+        clinica, rispettando l'\textbf{Assioma di Sensibilità}.
       \end{block}
     \end{column}
 
     \begin{column}{0.42\textwidth}
-      \begin{alertblock}{Completeness — Verifica}
+      \begin{alertblock}{Verifica di Convergenza (Completeness)}
         \footnotesize
-        \[
-          \text{Rel\_Error} = \frac{|f(x) - f(x') - \sum \text{Attr}|}{|f(x)-f(x')|}
-        \]
-        Accettabile se $\le 5\%$.\\
-        Garantisce che le attribuzioni spieghino\\
-        \textit{tutta} la differenza di output.
+        \centering $\sum \text{Attribuzioni} \approx f(x) - f(x')$ \\[0.4em]
+        \raggedright Garantisce che la somma spieghi \textit{esattamente} la differenza di predizione. \textbf{Tolleranza:} Errore Relativo $\le 5\%$.
       \end{alertblock}
 
-      \vspace{0.3em}
-      \begin{exampleblock}{Ottimizzazione Hardware}
+      \vspace{0.0em}
+      \begin{exampleblock}{Ottimizzazione Hardware (GPU)}
         \footnotesize
-        Riemann Trapezoid vs Gauss-Legendre:\\
-        da \alert{15~s/campione} a \textbf{2.5~s/campione}.\\
-        Inoltre, il \textbf{90\%} dei campioni converge a\\
-        $m{=}1500$ steps di integrazione.
+        Il default di libreria (Gauss-Legendre) satura la CPU.\\
+        \textbf{Soluzione adottata: Riemann Trapezoid}
+        \begin{itemize}
+          \item Vettorializzazione 100\% su GPU.
+          \item Tempi: da \alert{15~s} a \textbf{2.5~s / traccia}.
+          \item Algoritmo adattivo per garantire la convergenza a tutte le tracce con $m \text{ steps} \in [1500,5500] \subset \mathbb{N}$
+        \end{itemize}
       \end{exampleblock}
     \end{column}
   \end{columns}
@@ -432,13 +430,13 @@
 % ── SLIDE 13: Aggregazione Sub-Token ─────────────────────────
 \begin{frame}{La Sfida: Aggregazione dei Sub-Token}
   \textbf{WordPiece frammenta} le parole cliniche in sub-token privi
-  di significato autonomo. \alert{Serve ricostruirle.}
+  di significato autonomo. \\ \alert{\textbf{Serve ricostruirle}}.
 
   \vspace{0.5em}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
       \textbf{Step A — da 768 dimensioni a scalar:}\\
-      $\text{sum}(\text{dim}=-1)$ collassa il vettore IG in un
+      Il vettore IG viene collassato in un
       singolo valore per token.
 
       \vspace{0.4em}
@@ -506,20 +504,31 @@
   BERT + IG identificano i \alert{colli di bottiglia processuali}.
 
   \vspace{0.3em}
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
+  \begin{columns}[c]
+    \begin{column}{0.45\textwidth}
       \centering
       \includegraphics[width=\linewidth]%
         {histogram_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
-      {\small\itshape Top Actions: punteggi IG aggregati\\
-      per azione clinica (scala logaritmica).}
     \end{column}
-    \begin{column}{0.49\textwidth}
+    \begin{column}{0.45\textwidth}
       \centering
       \includegraphics[width=\linewidth]%
         {heatmap_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
-      {\small\itshape Heatmap intra-traccia: l'intensità cromatica\\
-      isola il collo di bottiglia nella sequenza.}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.4em}
+  \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+      \centering
+      {\small\itshape Impatto Clinico: i gradienti aggregati\\
+      isolano le procedure maggiormente\\ associate allo spreco del LOS.}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \centering
+      {\small\itshape Mappa di Attribuzione: l'intensità\\
+      cromatica quantifica il peso decisionale\\
+      nel separare la classe critica dalla normale.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -527,82 +536,62 @@
 % ── SLIDE 15: Fattibilità Aziendale ─────────────────────────
 \section{Conclusioni}
 
-\begin{frame}{Fattibilità Aziendale e Costi di Deployment}
-  \begin{columns}[T]
-    \begin{column}{0.52\textwidth}
-      \textbf{Hardware:} RTX 4090 | AMD Ryzen 9 5900X | 64 GB RAM
+\begin{frame}{Costi di Deployment}
+  \textbf{Hardware:} RTX 4090 | AMD Ryzen 9 5900X | 64 GB RAM
 
-      \vspace{0.5em}
-      \begin{block}{Metriche Wall-Clock (1.109 pazienti)}
-        \renewcommand{\arraystretch}{1.2}
-        \begin{tabular}{lr}
-          \toprule
-          \textbf{Fase} & \textbf{Tempo} \\
-          \midrule
-          Parsing XES $\to$ Storytelling & 1~min \\
-          Fine-tuning BERT (5 epoche) & 6~min~30~s \\
-          Estrazione IG (109 tracce) & 8~min~16~s \\
-          \midrule
-          \textbf{Overhead totale (1.109 paz.)} & \alert{\textbf{$\approx$ 80 min}} \\
-          \bottomrule
-        \end{tabular}
-      \end{block}
-    \end{column}
-
-    \begin{column}{0.44\textwidth}
-      \begin{exampleblock}{Scenario Reale}
-        \textbf{Trigger notturno automatico:}
-        \begin{enumerate}
-          \item Esportazione asincrona dal DB ospedaliero
-          \item Pipeline IG in background
-          \item \textbf{Report pronto al mattino} per il case manager
-        \end{enumerate}
-      \end{exampleblock}
-
-      \vspace{0.4em}
-      Il sistema è \textbf{reale e sostenibile}:\\
-      nessun hardware live aggiuntivo,\\
-      nessun cloud dedicato obbligatorio.
-    \end{column}
-  \end{columns}
+  \vspace{1em}
+  \begin{block}{Metriche Wall-Clock}
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lr}
+      \toprule
+      \textbf{Fase} & \textbf{Tempo} \\
+      \midrule
+      Parsing XES (7393) $\to$ Storytelling & 1~min \\
+      Fine-tuning BERT (15 epoche) & 18~min~30~s \\
+      Estrazione IG (109 tracce) & 8~min~16~s \\
+      \midrule
+      \textbf{Overhead totale} & \alert{\textbf{$\approx$ 30 min}} \\
+      \bottomrule
+    \end{tabular}
+  \end{block}
 \end{frame}
 
 % ── SLIDE 16: Conclusioni ─────────────────────────────────────
 \begin{frame}{Conclusioni e Sviluppi Futuri}
   \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \textbf{Risultati raggiunti:}
+    \begin{column}{0.52\textwidth} % Leggermente allargata per far respirare il testo
+      \textbf{Risultati e Lezioni Apprese:}
       \begin{itemize}
         \item Pipeline end-to-end: XES $\to$ Storytelling $\to$ BERT $\to$ IG
-        \item Balanced Accuracy \textbf{89.69\%} con sbilanciamento 89/11
-        \item Cruscotto clinico leggibile per le amministrazioni
-        \item Fattibilità computazionale \textbf{dimostrata empiricamente}
+        \item Balanced Accuracy \textbf{89.69\%} (sbilanciamento gestito via Focal Loss)
+        \item \textbf{Cruscotto manageriale} ottenuto via ricomposizione semantica dei token
+        \item \textbf{Generalizzabilità:} modello robusto su terminologie locali
       \end{itemize}
 
-      \vspace{0.5em}
-      \begin{alertblock}{Limite Fondamentale}
+      \vspace{0.4em}
+      \begin{alertblock}{Limite Epistemologico}
         IG e Attention Maps misurano \textbf{correlazione},
         non causalità. La valutazione clinica finale
-        spetta sempre allo \alert{specialista umano}.
+        spetta sempre allo \textbf{\alert{specialista umano}}.
       \end{alertblock}
     \end{column}
 
-    \begin{column}{0.47\textwidth}
+    \begin{column}{0.45\textwidth}
       \begin{block}{Sviluppi Futuri — TEXLOS}
         Da analisi \textit{post-mortem} a classificazione
-        \textbf{runtime}:
+        \textbf{runtime} dinamica:
         \begin{itemize}
-          \item \textit{Next-Activity-Prediction} con IG parziali
-          \item XAI ad alta densità ai checkpoint quotidiani
+          \item \textit{Next-Activity-Prediction} con calcolo IG parziali
+          \item XAI ad alta densità ai checkpoint quotidiani di degenza
           \item Logiche manageriali \textbf{proattive} in tempo reale
         \end{itemize}
       \end{block}
 
-      \vspace{0.5em}
+      \vspace{1.5em}
       \centering
       \Large\textbf{Grazie per l'attenzione.}\\
       \normalsize\vspace{0.3em}
-      \textit{Domande?}
     \end{column}
   \end{columns}
 \end{frame}
@@ -632,7 +621,7 @@
       \end{itemize}
     \end{column}
 
-    \begin{column}{0.47\textwidth}
+    \begin{column}{0.55\textwidth}
       \begin{block}{Ottimizzazione con Optuna}
         Esplorazione bayesiana automatica degli iperparametri:
         \begin{itemize}
@@ -640,13 +629,11 @@
           \item Parametri Focal Loss ($\alpha$, $\gamma$)
           \item Early stopping: patience = 5, $\Delta_{\min} = 10^{-3}$
         \end{itemize}
-        Miglior checkpoint: \textbf{epoca 10} su 15 totali.
       \end{block}
 
       \vspace{0.0em}
       \centering
       \includegraphics[width=0.7\linewidth]{train_val_loss.png}
-      {\small\itshape Curva Training vs Validation Loss.}
     \end{column}
   \end{columns}
 \end{frame}
