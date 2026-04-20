@@ -107,77 +107,125 @@
   \end{frame}
 }
 
-% ── SLIDE 2: Il Problema — LOS ───────────────────────────────
+% ── SLIDE 2: Introduzione al Caso di Studio ───────────────────────────────
 \section{Contesto e Motivazione}
 
+% ── SLIDE 3: Il Problema — LOS ───────────────────────────────
 \begin{frame}{Il Problema: Length of Stay (LOS)}
-  \begin{columns}[T]
-    \begin{column}{0.52\textwidth}
-      \textbf{Cos'è il LOS?}\\
-      La \alert{durata della degenza ospedaliera} è un indicatore
-      critico di efficienza clinica e sostenibilità economica.
+  \textbf{Cos'è il LOS?}\\
+  La \alert{durata della degenza ospedaliera} è un indicatore
+  critico di efficienza clinica e sostenibilità economica.
 
-      \vspace{0.4em}
-      \begin{block}{Soglia Critica}
-        Degenze $\ge 20$ giorni classificate come \textbf{long-LOS}:\\
-        sovraccarico di letti, rischio nosocomiale, costi elevati.
-      \end{block}
-
-
-    \end{column}
-
-    \begin{column}{0.45\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
-      {\small\itshape Numero d'azioni per classe:\\ i casi critici hanno percorsi molto più lunghi.}
-    \end{column}
-  \end{columns}
+  \vspace{1em}
+  \begin{block}{Soglia Critica}
+    Degenze $\ge 20$ giorni classificate come \textbf{long-LOS}:\\
+    sovraccarico di letti, rischio nosocomiale, costi elevati.
+  \end{block}
 \end{frame}
 
-% ── SLIDE 3: Limiti Process Mining ───────────────────────────
+% ── SLIDE 4: Limiti Process Mining ───────────────────────────
 \begin{frame}{I Limiti dell'Approccio Classico}
-  \begin{columns}[T]
-    \begin{column}{0.55\textwidth}
-      \textbf{Process Mining tradizionale:}
-      \begin{itemize}
-        \item Estrae grafi deterministici da log XES
-        \item Modella flussi di cura e deviazioni standard
-        \item Efficace per processi stabili e a bassa variabilità
-      \end{itemize}
+  \textbf{Process Mining tradizionale:}
+  \begin{itemize}
+    \item Estrae grafi deterministici da log XES
+    \item Modella flussi di cura e deviazioni standard
+    \item Efficace per processi stabili e a bassa variabilità
+  \end{itemize}
 
-      \vspace{0.5em}
-      \begin{alertblock}{Le Criticità sui Log Clinici}
-        \begin{itemize}
-          \item Alta variabilità e rumore nei log reali
-          \item Dipendenze temporali a lungo termine
-          \item Complessità semantica delle azioni cliniche
-        \end{itemize}
-      \end{alertblock}
+  \vspace{1em}
+  \begin{alertblock}{Le Criticità sui Log Clinici}
+    \begin{itemize}
+      \item \textbf{Alta variabilità e rumore} nei log reali (distribuzione a coda lunga)
+      \item \textbf{Dipendenze temporali} a lungo termine
+      \item \textbf{Complessità semantica} delle azioni cliniche
+    \end{itemize}
+  \end{alertblock}
 
-      \vspace{0.4em}
-      \textbf{Serve un modello capace di comprendere\\
-      il \alert{contesto bidirezionale} di una sequenza.}
-    \end{column}
-
-    \begin{column}{0.42\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{actions_per_case_distribution.png}
-      {\small\itshape Distribuzione azioni per paziente:\\
-      coda lunga $\to$ alta variabilità da gestire.}
-    \end{column}
-  \end{columns}
+  \vspace{1em}
+  \textbf{Conclusione:} Serve un modello capace di comprendere 
+  il \alert{contesto bidirezionale} di una sequenza.
 \end{frame}
 
-% ── NUOVA SLIDE 4: I 3 Approcci di Embedding ─────────────────
+% ── SLIDE 5: Introduzione alla Metodologia ─────────────────
 \section{Metodologia}
 
+% ── SLIDE 6: Dataset e Sbilanciamento ────────────────────────
+\begin{frame}{Dataset e la Sfida dello Sbilanciamento}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \begin{block}{EDA — Analisi Esplorativa}
+        \begin{itemize}
+          \item \textbf{7.393} casi | \textbf{88.115} eventi
+          \item Media: \textbf{12.92} azioni/paziente
+          \item Mediana: 9.00 azioni $\to$ distribuzione \textit{right-skewed}
+        \end{itemize}
+      \end{block}
+
+      \vspace{0.4em}
+      \textbf{Sbilanciamento di Classe:}
+      \begin{itemize}
+        \item Classe 0 (normale): \textbf{6.584} casi — 89\%
+        \item Classe 1 (LOS $\ge 20$ gg): \alert{\textbf{809}} casi — 11\%
+      \end{itemize}
+
+      \vspace{0.4em}
+      Una Binary Cross Entropy (BCE) standard collassa sulla classe maggioritaria.\\
+      \textbf{Soluzione: Focal Loss.}
+    \end{column}
+
+    \begin{column}{0.47\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
+      {\small\itshape Boxplot della quantità di eventi per classe:\\
+      i casi di LOS critico presentano variabilità maggiore.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE 9: BERT + Focal Loss ────────────────────────────────
+\begin{frame}{Il Modello: BERT e $\alpha$-Balanced Focal Loss }
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \textbf{Architettura:} \texttt{bert-base-uncased} + classification head
+      \begin{itemize}
+        \item 110M parametri, tokenizer WordPiece
+        \item Perché non ClinicalBERT? \alert{Vocabulary mismatch}:\\
+              nomenclature locali non standardizzate
+        \item Setup (Stratified 5-Fold CV): \texttt{lr}=$5\text{e-}5$, batch=22, early stopping epoca 10
+      \end{itemize}
+
+      \vspace{0.4em}
+      \begin{block}{Focal Loss ($\gamma=2.0$, $\alpha=[0.25, 0.75]$)}
+        \[
+          FL(p_t) = -\alpha_t\,(1-p_t)^{\gamma}\,\log(p_t)
+        \]
+        Il fattore $(1-p_t)^\gamma$ \textbf{abbatte il gradiente}
+        degli esempi facili (classe 0 dominante), forzando BERT
+        ad imparare i casi rari di long-LOS.
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.47\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{focal loss fig 1.png}
+      {\small\itshape Al crescere di $\gamma$, la loss sugli esempi\\
+      facili ($p_t \to 0$) crolla: il modello si \alert{concentra}\\
+      sui casi complessi e rari. \\ \alert{\textbf{Attenzione}}: Un $\gamma$ eccessivo porta 
+      il modello a ignorare i casi normali, rischiando di overfittare esclusivamente 
+      sulle anomalie}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+% ── SLIDE 7: La Ricerca dell'Embedding Ideale ─────────────────
 \begin{frame}{La Ricerca dell'Embedding Ideale}
   Per interfacciare i log clinici testuali e temporali con il Transformer, 
   sono state testate \textbf{tre distinte filosofie di embedding}:
 
   \vspace{0.3em}
   \begin{columns}[T]
-    \begin{column}{0.31\textwidth}
+    \begin{column}{0.30\textwidth}
       \begin{block}{1. Array Concatenati}
         \small
         Doppio input parallelo:
@@ -188,18 +236,19 @@
       \end{block}
     \end{column}
 
-    \begin{column}{0.33\textwidth}
+    \begin{column}{0.35\textwidth}
       \begin{block}{2. Binning Temporale}
         \small
-        Discretizzazione \textit{data-driven} del tempo. Inserimento di token speciali derivati dalla distribuzione empirica:
+        Discretizzazione \textit{data-driven} del tempo. Inserimento di token 
+        speciali derivati dalla distribuzione empirica, ad esempio:
         \begin{itemize}
-            \item \texttt{\_DELTA\_SHORT\_}
-            \item \texttt{\_DELTA\_MEDIUM\_} (1-7gg)
+          \item \small \texttt{TIME\_DELTA\_SHORT\_} (0-1gg)
+          \item \small \texttt{TIME\_DELTA\_MEDIUM\_} (1-7gg)
         \end{itemize}
       \end{block}
     \end{column}
 
-    \begin{column}{0.32\textwidth}
+    \begin{column}{0.30\textwidth}
       \begin{exampleblock}{3. Storytelling}
         \small
         Traduzione semantica in frasi inglesi strutturate. 
@@ -210,15 +259,16 @@
   \end{columns}
 \end{frame}
 
-% ── MODIFICA VECCHIA SLIDE 4 -> DIVENTA SLIDE 5 ──────────────
+% ── SLIDE 8: L'Approccio Vincente: Il Paradigma ``Storytelling'' ──────────────
 \begin{frame}{L'Approccio Vincente: Il Paradigma ``Storytelling''}
-  \textbf{L'Intuizione:} tradurre la traccia in un \textbf{testo narrativo} massimizza 
+  \textbf{L'Intuizione:} tradurre la traccia in un \textbf{testo in linguaggio naturale} massimizza 
   la capacità di BERT di estrarre contesto bidirezionale.
 
   \vspace{0.0em}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
       \begin{block}{Da Log XES\ldots}
+        
         \texttt{case\_id: 5870415}\\
         \texttt{--> Complete abdomen ultrasound}\\
         \texttt{--> CT skull} \quad$\Delta = 0$~s\\
@@ -244,77 +294,13 @@
   \textbf{Requisiti Ingegneristici Algoritmo:}
   \begin{itemize}
       \item \textbf{Gestione Tempo:} Iniezione esatta del \textit{delta in secondi} (nessuna approssimazione).
-      \item \textbf{Eventi Simultanei:} Aggregazione dinamica in \textit{bullet points} testuali per evitare ridondanza e non sovraccaricare l'Attention di BERT.
+      \item \textbf{Eventi Simultanei:} Aggregazione per evitare ridondanza e non sovraccaricare l'Attention di BERT con token identici.
   \end{itemize}
 \end{frame}
 
-% ── SLIDE 5: Dataset e Sbilanciamento ────────────────────────
-\begin{frame}{Dataset e la Sfida dello Sbilanciamento}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \begin{block}{EDA — Analisi Esplorativa}
-        \begin{itemize}
-          \item \textbf{7.393} casi | \textbf{88.115} eventi
-          \item Media: \textbf{12.92} azioni/paziente
-          \item Mediana: 9.00 azioni $\to$ distribuzione \textit{right-skewed}
-        \end{itemize}
-      \end{block}
 
-      \vspace{0.4em}
-      \textbf{Sbilanciamento di Classe:}
-      \begin{itemize}
-        \item Classe 0 (normale): \textbf{6.584} casi — 89\%
-        \item Classe 1 (LOS $\ge 20$ gg): \alert{\textbf{809}} casi — 11\%
-      \end{itemize}
 
-      \vspace{0.4em}
-      Una BCE standard collassa sulla classe maggioritaria.\\
-      \textbf{Soluzione: Focal Loss.}
-    \end{column}
-
-    \begin{column}{0.47\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
-      {\small\itshape Boxplot della quantità di eventi per classe:\\
-      i casi di LOS critico presentano variabilità maggiore.}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% ── SLIDE 6: BERT + Focal Loss ────────────────────────────────
-\begin{frame}{Il Modello: BERT e la Focal Loss}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \textbf{Architettura:} \texttt{bert-base-uncased} + classification head
-      \begin{itemize}
-        \item 110M parametri, tokenizer WordPiece
-        \item Perché non ClinicalBERT? \alert{Vocabulary mismatch}:\\
-              nomenclature locali non standardizzate
-        \item Setup (5-Fold CV): \texttt{lr}=$5\text{e-}5$, batch=22, early stopping epoca 10
-      \end{itemize}
-
-      \vspace{0.4em}
-      \begin{block}{Focal Loss ($\gamma=2.0$, $\alpha=[0.25, 0.75]$)}
-        \[
-          FL(p_t) = -\alpha_t\,(1-p_t)^{\gamma}\,\log(p_t)
-        \]
-        Il fattore $(1-p_t)^\gamma$ \textbf{abbatte il gradiente}
-        degli esempi facili (classe 0 dominante), forzando BERT
-        ad imparare i casi rari di long-LOS.
-      \end{block}
-    \end{column}
-
-    \begin{column}{0.47\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{focal loss fig 1.png}
-      {\small\itshape Al crescere di $\gamma$, la loss sugli esempi\\
-      facili ($p_t \to 1$) crolla: il modello si \alert{concentra}\\
-      sui casi complessi e rari.}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% ── SLIDE 7: Risultati Classificazione ───────────────────────
+% ── SLIDE 10: Risultati Classificazione ───────────────────────
 \begin{frame}{Risultati: Balanced Accuracy 88\%}
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
@@ -356,54 +342,46 @@
         occupati a sorpresa, dimissioni abortite.
 
         \vspace{0.3em}
-        Falsi positivi (Precision 61.54\%) = allerta
-        preventiva: il costo è tollerabile e gestibile.
+        Grazie alla Focal Loss abbiamo solo 17 falsi negativi su 121 casi critici.
+        % Falsi positivi (Precision 61.54\%) = allerta
+        % preventiva: il costo è tollerabile e gestibile.
       \end{alertblock}
-
-      \vspace{0.3em}
-      {\footnotesize\itshape La Focal Loss è la chiave:\\
-      solo 17 falsi negativi su 121 casi critici.}
     \end{column}
   \end{columns}
 \end{frame}
 
-% ── SLIDE 8: XAI — Black Box ──────────────────────────────────
+% ── SLIDE 11: XAI — Black Box ──────────────────────────────────
 \section{Explainable AI}
 
 \begin{frame}{Il Problema della Black-Box in Sanità}
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
-      Il modello \textbf{funziona} — ma il medico deve \textbf{fidarsi}.
-
       \begin{alertblock}{Il Paradosso della Black-Box}
         Una rete neurale è un oracolo opaco: restituisce
         una probabilità, ma \alert{non spiega perché}.\\
         In sanità questa opacità è inaccettabile.
       \end{alertblock}
 
-      \textbf{Già disponibili in letteratura:}
+      {\footnotesize
+      \textbf{Perché le tecniche classiche falliscono sul testo?}
       \begin{itemize}
-        \item Grad-CAM $\to$ solo per CNN/immagini
-        \item Vanilla Gradient $\to$ \textit{gradient shattering}
-        \item SmoothGrad / Blur IG $\to$ no embedding discreti
+        \item \textbf{Grad-CAM:} ideato per immagini (CNN), incompatibile con la \textit{Self-Attention}.
+        \item \textbf{SmoothGrad / Blur IG:} sfocare un pixel continuo ha senso, ma perturbare casualmente un \textit{token discreto} genera vettori privi di significato semantico.
       \end{itemize}
 
-      \vspace{0.2em}
-      \textbf{Soluzione adotatta:} \alert{Integrated Gradients (IG)}\\
-      assiomaticamente verificabili per sequenze testuali.
+      \textbf{Soluzione:} \alert{Integrated Gradients (IG)}\\
+      Sostituisce la perturbazione con un'integrazione da una \textit{baseline} fissa, garantendo validità assiomatica sulle sequenze testuali. \par}
     \end{column}
 
     \begin{column}{0.42\textwidth}
       \centering
       \includegraphics[width=\linewidth]{comparison_with_a_dog.png}
-      {\small\itshape I metodi classici producono maschere\\
-      ad alto rumore. IG fornisce attribuzioni\\
-      stabili e semanticamente coerenti.}
+      {\small\itshape I metodi classici (es. Vanilla Gradient) soffrono di\\ \textit{gradient shattering}. IG fornisce attribuzioni\\ stabili mediando queste oscillazioni.}
     \end{column}
   \end{columns}
 \end{frame}
 
-% ── SLIDE 9: Integrated Gradients ────────────────────────────
+% ── SLIDE 12: Integrated Gradients ────────────────────────────
 \begin{frame}{Integrated Gradients e la Baseline \texttt{[PAD]}}
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
@@ -444,14 +422,14 @@
         \footnotesize
         Riemann Trapezoid vs Gauss-Legendre:\\
         da \alert{15~s/campione} a \textbf{2.5~s/campione}.\\
-        Inoltre, il \textbf{90\%} dei campioni converge ad\\
-        appena $m{=}1500$ steps di integrazione.
+        Inoltre, il \textbf{90\%} dei campioni converge a\\
+        $m{=}1500$ steps di integrazione.
       \end{exampleblock}
     \end{column}
   \end{columns}
 \end{frame}
 
-% ── SLIDE 10: Aggregazione Sub-Token ─────────────────────────
+% ── SLIDE 13: Aggregazione Sub-Token ─────────────────────────
 \begin{frame}{La Sfida: Aggregazione dei Sub-Token}
   \textbf{WordPiece frammenta} le parole cliniche in sub-token privi
   di significato autonomo. \alert{Serve ricostruirle.}
@@ -522,7 +500,7 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 11: Cruscotto Clinico ★ ────────────────────────────
+% ── SLIDE 14: Cruscotto Clinico ★ ────────────────────────────
 \begin{frame}{Il Cruscotto Clinico: Reparto 701 Cardiochirurgia}
   \textbf{109 pazienti — Ospedale di Alessandria.}
   BERT + IG identificano i \alert{colli di bottiglia processuali}.
@@ -546,7 +524,7 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 12: Fattibilità Aziendale ─────────────────────────
+% ── SLIDE 15: Fattibilità Aziendale ─────────────────────────
 \section{Conclusioni}
 
 \begin{frame}{Fattibilità Aziendale e Costi di Deployment}
@@ -589,7 +567,7 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 13: Conclusioni ─────────────────────────────────────
+% ── SLIDE 16: Conclusioni ─────────────────────────────────────
 \begin{frame}{Conclusioni e Sviluppi Futuri}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
@@ -634,7 +612,7 @@
 % ============================================================
 \appendix
 
-% ── SLIDE 14 (B): Hardware & Hyperparameter Tuning ───────────
+% ── SLIDE 17 (B): Hardware & Hyperparameter Tuning ───────────
 \begin{frame}{(Backup) Hardware e Hyperparameter Tuning}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
@@ -645,7 +623,7 @@
         \item RAM: 64 GB
       \end{itemize}
 
-      \vspace{0.4em}
+      \vspace{0.5em}
       \textbf{Perché non BERT-Large?}
       \begin{itemize}
         \item Batch size: da 22 (base) a \alert{4} (large) per VRAM
@@ -665,7 +643,7 @@
         Miglior checkpoint: \textbf{epoca 10} su 15 totali.
       \end{block}
 
-      \vspace{0.3em}
+      \vspace{0.0em}
       \centering
       \includegraphics[width=0.7\linewidth]{train_val_loss.png}
       {\small\itshape Curva Training vs Validation Loss.}
@@ -673,7 +651,7 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 15 (B): Esperimento LLM fallito ────────────────────
+% ── SLIDE 18 (B): Esperimento LLM fallito ────────────────────
 \begin{frame}{(Backup) L'Esperimento Fallito: Data Augmentation con LLM}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
