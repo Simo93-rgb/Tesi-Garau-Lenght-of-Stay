@@ -168,13 +168,54 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 4: Storytelling ─────────────────────────────────────
+% ── NUOVA SLIDE 4: I 3 Approcci di Embedding ─────────────────
 \section{Metodologia}
 
-\begin{frame}{L'Intuizione: il Paradigma ``Storytelling''}
-  \textbf{Idea fondamentale:} tradurre una traccia clinica in un\\\textbf{testo narrativo in lingua naturale} processabile da BERT.
+\begin{frame}{La Ricerca dell'Embedding Ideale}
+  Per interfacciare i log clinici testuali e temporali con il Transformer, 
+  sono state testate \textbf{tre distinte filosofie di embedding}:
 
-  \vspace{0.5em}
+  \vspace{0.3em}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{1. Array Concatenati}
+        \small
+        Doppio input parallelo:
+        \begin{itemize}
+            \item Array testuale (le azioni cliniche).
+            \item Array numerico \textit{float} (i delta temporali in secondi).
+        \end{itemize}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.33\textwidth}
+      \begin{block}{2. Binning Temporale}
+        \small
+        Discretizzazione \textit{data-driven} del tempo. Inserimento di token speciali derivati dalla distribuzione empirica:
+        \begin{itemize}
+            \item \texttt{\_DELTA\_SHORT\_}
+            \item \texttt{\_DELTA\_MEDIUM\_} (1-7gg)
+        \end{itemize}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.32\textwidth}
+      \begin{exampleblock}{3. Storytelling}
+        \small
+        Traduzione semantica in frasi inglesi strutturate. 
+        Gli eventi e i vincoli cronologici generano paragrafi narrativi.
+        \textbf{L'approccio rivelatosi vincente.}
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── MODIFICA VECCHIA SLIDE 4 -> DIVENTA SLIDE 5 ──────────────
+\begin{frame}{L'Approccio Vincente: Il Paradigma ``Storytelling''}
+  \textbf{L'Intuizione:} tradurre la traccia in un \textbf{testo narrativo} massimizza 
+  la capacità di BERT di estrarre contesto bidirezionale.
+
+  \vspace{0.0em}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
       \begin{block}{Da Log XES\ldots}
@@ -184,24 +225,27 @@
         \texttt{--> Complete abdomen ultrasound} \quad$\Delta = 728.160$~s
       \end{block}
     \end{column}
+    
     \begin{column}{0.48\textwidth}
       \begin{exampleblock}{\ldots a Narrazione}
-        \small
-        \textit{``The patient, 87 years old, underwent a series of
-        examinations. After 0 seconds, the following examinations
-        were performed simultaneously: Complete abdomen ultrasound
-        and CT skull. After 728,160 seconds, Complete abdomen
-        ultrasound was performed.''}
+        \small\itshape
+        ``The patient, 87 years old, underwent a series of
+        examinations. \\
+        After 0 seconds, \textbf{the following examinations
+        were performed simultaneously}: Complete abdomen ultrasound
+        and CT skull. \\
+        After \textbf{728,160 seconds}, Complete abdomen
+        ultrasound was performed.''
       \end{exampleblock}
     \end{column}
   \end{columns}
 
-  \vspace{0.5em}
-  \begin{alertblock}{Perché Storytelling vince sulle alternative?}
-    Testati 3 embedding (binning temporale, array concatenati, storytelling).\\
-    Lo storytelling porta la \textbf{Balanced Accuracy a 89.69\%},
-    massimizzando il contesto semantico per BERT.
-  \end{alertblock}
+  \vspace{0.0em}
+  \textbf{Requisiti Ingegneristici Algoritmo:}
+  \begin{itemize}
+      \item \textbf{Gestione Tempo:} Iniezione esatta del \textit{delta in secondi} (nessuna approssimazione).
+      \item \textbf{Eventi Simultanei:} Aggregazione dinamica in \textit{bullet points} testuali per evitare ridondanza e non sovraccaricare l'Attention di BERT.
+  \end{itemize}
 \end{frame}
 
 % ── SLIDE 5: Dataset e Sbilanciamento ────────────────────────
@@ -230,9 +274,9 @@
 
     \begin{column}{0.47\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{class_action_prevalence_diff_top.png}
-      {\small\itshape Delta di prevalenza per azione:\\
-      alcune procedure correlano fortemente\\con LOS critico.}
+      \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
+      {\small\itshape Boxplot della quantità di eventi per classe:\\
+      i casi di LOS critico presentano variabilità maggiore.}
     \end{column}
   \end{columns}
 \end{frame}
