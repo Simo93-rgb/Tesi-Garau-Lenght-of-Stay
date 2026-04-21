@@ -149,70 +149,67 @@
 % ── SLIDE 5: Introduzione alla Metodologia ─────────────────
 \section{Metodologia}
 
-% ── SLIDE 6: Dataset e Sbilanciamento ────────────────────────
-\begin{frame}{Dataset e la Sfida dello Sbilanciamento}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \begin{block}{EDA — Analisi Esplorativa}
-        \begin{itemize}
-          \item \textbf{7.393} casi | \textbf{88.115} eventi
-          \item Media: \textbf{12.92} azioni/paziente
-          \item Mediana: 9.00 azioni $\to$ distribuzione \textit{right-skewed}
-        \end{itemize}
-      \end{block}
+% % ── SLIDE 6: Dataset e Sbilanciamento ────────────────────────
+% \begin{frame}{Dataset e la Sfida dello Sbilanciamento}
+%   \begin{columns}[T]
+%     \begin{column}{0.50\textwidth}
+%       \begin{block}{EDA — Analisi Esplorativa}
+%         \begin{itemize}
+%           \item \textbf{7.393} casi | \textbf{88.115} eventi
+%           \item Media: \textbf{12.92} azioni/paziente
+%           \item Mediana: 9.00 azioni $\to$ distribuzione \textit{right-skewed}
+%         \end{itemize}
+%       \end{block}
 
-      \vspace{0.4em}
-      \textbf{Sbilanciamento di Classe:}
-      \begin{itemize}
-        \item Classe 0 (normale): \textbf{6.584} casi — 89\%
-        \item Classe 1 (LOS $\ge 20$ gg): \alert{\textbf{809}} casi — 11\%
-      \end{itemize}
+%       \vspace{0.4em}
+%       \textbf{Sbilanciamento di Classe:}
+%       \begin{itemize}
+%         \item Classe 0 (normale): \textbf{6.584} casi — 89\%
+%         \item Classe 1 (LOS $\ge 20$ gg): \alert{\textbf{809}} casi — 11\%
+%       \end{itemize}
 
-      \vspace{0.4em}
-      Una Binary Cross Entropy (BCE) standard collassa sulla classe maggioritaria.\\
-      \textbf{Soluzione: Focal Loss.}
-    \end{column}
+%       \vspace{0.4em}
+%       Una Binary Cross Entropy (BCE) standard collassa sulla classe maggioritaria.\\
+%       \textbf{Soluzione: Focal Loss.}
+%     \end{column}
 
-    \begin{column}{0.47\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
-      {\small\itshape Boxplot della quantità di eventi per classe:\\
-      i casi di LOS critico presentano variabilità maggiore.}
-    \end{column}
-  \end{columns}
+%     \begin{column}{0.47\textwidth}
+%       \centering
+%       \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
+%       {\small\itshape Boxplot della quantità di eventi per classe:\\
+%       i casi di LOS critico presentano variabilità maggiore.}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+
+% ── SLIDE 9: BERT ─────────────────────────────────────────────
+\begin{frame}{Il Modello: L'Architettura BERT}
+  \textbf{Architettura:} \texttt{bert-base-uncased} + classification head
+  
+  \vspace{1em}
+  \begin{itemize}
+    \item \textbf{110M parametri}, tokenizer WordPiece
+    \item \textbf{Perché non ClinicalBERT?} \alert{Vocabulary mismatch}:\\
+          nomenclature locali non standardizzate e soggette a variabilità di reparto
+    \item \textbf{Setup (Stratified 5-Fold CV):} \texttt{lr}=$5\text{e-}5$, batch=22, early stopping epoca 10
+  \end{itemize}
 \end{frame}
 
-% ── SLIDE 9: BERT + Focal Loss ────────────────────────────────
-\begin{frame}{Il Modello: BERT e $\alpha$-Balanced Focal Loss }
+% ── SLIDE 10: Focal Loss ──────────────────────────────────────
+\begin{frame}{Il Modello: La Focal Loss}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
-      \textbf{Architettura:} \texttt{bert-base-uncased} + classification head
-      \begin{itemize}
-        \item 110M parametri, tokenizer WordPiece
-        \item Perché non ClinicalBERT? \alert{Vocabulary mismatch}:\\
-              nomenclature locali non standardizzate
-        \item Setup (Stratified 5-Fold CV): \texttt{lr}=$5\text{e-}5$, batch=22, early stopping epoca 10
-      \end{itemize}
-
-      \vspace{0.4em}
-      \begin{block}{Focal Loss ($\gamma=2.0$, $\alpha=[0.25, 0.75]$)}
-        \[
-          FL(p_t) = -\alpha_t\,(1-p_t)^{\gamma}\,\log(p_t)
-        \]
+      \vspace{1em}
+      \begin{block}{Gestione dello Sbilanciamento}
         Il fattore $(1-p_t)^\gamma$ \textbf{abbatte il gradiente}
         degli esempi facili (classe 0 dominante), forzando BERT
-        ad imparare i casi rari di long-LOS.
+        ad imparare i casi rari e complessi di long-LOS.
       \end{block}
     \end{column}
 
     \begin{column}{0.47\textwidth}
       \centering
       \includegraphics[width=\linewidth]{focal loss fig 1.png}
-      {\small\itshape Al crescere di $\gamma$, la loss sugli esempi\\
-      facili ($p_t \to 0$) crolla: il modello si \alert{concentra}\\
-      sui casi complessi e rari. \\ \alert{\textbf{Attenzione}}: Un $\gamma$ eccessivo porta 
-      il modello a ignorare i casi normali, rischiando di overfittare esclusivamente 
-      sulle anomalie}
     \end{column}
   \end{columns}
 \end{frame}

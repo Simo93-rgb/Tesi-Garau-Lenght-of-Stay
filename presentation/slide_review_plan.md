@@ -1,79 +1,57 @@
 # Piano di Revisione Slide
+L'idea è di aumentare la leggibilità delle slides aumentando vistosamente la quantità di spazio "bianco" ma senza rinunciare alla dimensione del font. Molte slide sono "dense" e questo rompe drasticamente la fruibilità durante la presentazione. 
 
-Questo documento traccia l'analisi slide per slide del mazzo di presentazione, annotando problemi di spazio, overflow del testo e possibili soluzioni di impaginazione.
+## Approccio del lavoro
+Lavorerai una singola slide alla volta, seguendo delle precise istruzioni che ti verranno fornite nei successivi paragrafi. L'elenco dei paragrafi non sarà numericamente identico al numero di slide in quanto alcune sono già ben impaginate. 
 
-## Metodologia
-- Analisi visiva di ogni slide.
-- Identificazione di margini, testo clippato, sovrapposizioni.
-- Proposta di refactoring (suddivisione in 2 slide, rimozione testo verboso, ridimensionamento font o figure).
+Il lavoro sulla singola slide si dichiarerà concluso SE E SOLO SE io avrò dato specificatamente il comando "Fatto" o sinonimi. 
 
----
+Il contenuto delle slides è già ben scritto quindi non dovrai mai riformulare frasi o concetti. Questo è un lavoro di "taglia e cuci" dove andremo a ridistribuire i contenuti. 
 
-### Slide 1/12 — Il Problema: Length of Stay (LOS)
-**Problema:** Overflow verticale netto. La colonna di sinistra è troppo capiente e l'ultimo punto elenco ("Ospedale di Alessandria — 20 DRG") viene tagliato pesantemente.
-**Analisi:** La slide presenta la definizione di LOS, il box "Soglia Critica" e poi una sezione "Il dataset:". Quest'ultima sezione elenca il numero di casi (7.393) e di eventi, informazioni che vengono **perfettamente duplicate** più avanti nella slide "Dataset e la Sfida dello Sbilanciamento" (Slide 4).
-**Soluzione suggerita:** Rimuovere l'intero blocco "Il dataset:" da questa slide. In questo modo si elimina la duplicazione e la colonna di sinistra rientra abbondantemente nei margini senza necessità di rimpicciolire i font.
+## Riferimenti alle slide
 
-### Slide 2/12 — I Limiti dell'Approccio Classico
-**Problema:** Nessuno.
-**Analisi:** L'impaginazione è ottima. Il testo nella colonna di sinistra è ben bilanciato, i riquadri e i bullet point non creano overflow. Il grafico (coda lunga) nella colonna di destra ha la giusta dimensione e la didascalia è posizionata correttamente.
-**Soluzione suggerita:** Nessuna modifica necessaria.
+Ora partiamo con i commenti delle singole slides. Ricorda che il titolo dei paragrafi che seguono sono corrispondenti al titolo della slide di cui discuteremo.
 
-### Slide 3/12 — L'Intuizione: il Paradigma "Storytelling"
-**Problema:** Lieve wrap nel codice, ma nell'insieme è OK. Nessun overflow critico.
-**Analisi:** I blocchi affiancati "Da Log XES" e "a Narrazione" sono ben proporzionati. Nel blocco di sinistra la riga `-> Complete abdomen ultrasound` va a capo in modo un po' grezzo nel riquadro, ma è perfettamente leggibile e non esce dai bordi. Il footer e l'alert block non si accavallano.
-**Soluzione suggerita:** Nessuna modifica strutturale necessaria. Se si vuole pignoleggiare si può ridurre di pochissimo il font del blocco "Da Log XES", ma attualmente va bene così.
+### Dataset e la Sfida dello Sbilanciamento
+ Va semplicemente eliminata, ma per comodità l'ho già commentata io. Questo paragrafo è solo di contesto per permetterti di sapere che non è un errore mio che non ci sia la slide.
 
-### Slide 4/12 — Dataset e la Sfida dello Sbilanciamento
-**Problema:** Nessuno.
-**Analisi:** Entrambe le colonne sono ben formattate e i box si inseriscono perfettamene senza andare a sbattere sui bordi. Il grafico è centrato e leggibile.
-**Soluzione suggerita:** Nessuna modifica.
+### Il Modello: BERT e $\alpha$-Balanced Focal Loss 
+Questa slide è densa in modo esasperato, dobbiamo sicuramente dividerla in due. Qui creo due sotto-paragrafi così hai chiaro come deve essere divisa. 
 
-### Slide 5/12 — Il Modello: BERT e la Focal Loss
-**Problema:** Alta densità testuale, ma nessun overflow.
-**Analisi:** La slide contiene molto testo (lista puntata + spiegazione formula) ma ci sta tutta comodamente. Il margine inferiore è adeguato e non interferisce col footer.
-**Soluzione suggerita:** Nessuna modifica strutturale necessaria.
+#### BERT
+La prima slide deve contenere la parte di BERT e per questioni di impaginazione ruba l'idea di layout che ha la slide "Il Problema: Length of Stay (LOS)". Otterrai quindi una slides che presenta `bert-base-uncased` e i 3 punti dell'elenco puntato. 
 
-### Slide 6/12 — Risultati: Balanced Accuracy 88%
-**Problema:** Nessuno.
-**Analisi:** Resa visiva ottima. La tabella d'impatto e la matrice di confusione si bilanciano perfettamente con il box esplicativo del trade-off clinico sulla destra. Le proporzioni evitano del tutto l'effetto "muro di testo" e prevengono il clipping.
+#### $\alpha$-Balanced Focal Loss 
+La seconda parte della slide invece dovrà contenere unicamente la parte di Focal Loss. Siccome è un contenuto molto matematico e denso, vorrei togliere la ripetizione della formula matematica che tanto è già presente nella immagine. Vorrei togliere anche la sezione che mostra i valori di $\gamma$ e $\alpha$ e lasciare solo la parte del fattore che abbatte il gradiente. La didascalia della immagine è troppo grossa e lunga, andrebbe tolta. Se hai un suggerimento per lasciare come commento il comportamento al variare di $\gamma$ scrivilo qui sotto come sottoparagrafo a parte ma non implementarlo. 
 
-### Slide 7/12 — Il Problema della Black-Box in Sanità
-**Problema:** Overflow verticale della colonna di sinistra. La frase conclusiva ("sequenze testuali.") cade fuori dal box del testo e viene tagliata.
-**Analisi:** C'è tantissimo contenuto: intro, alertblock, elenco puntato "Già disponibili", e infine la soluzione. La densità verticale è accentuata da diversi `\vspace` inseriti manualmente nel codice LaTeX.
-**Soluzione suggerita:** Ridurre o eliminare alcuni `\vspace` espliciti nella colonna di sinistra tra un blocco e l'altro, oppure stringere l'elenco puntato "Già disponibili" rimuovendone un punto, per far salire la riga finale ed evitare il clipping.
+### L'Approccio Vincente
+Elimina l'intero riquadro in basso e centra meglio i due box che mostrano la conversione da XES a Storytelling. 
 
-### Slide 8/12 — Integrated Gradients e la Baseline [PAD]
-**Problema:** Grave overflow verticale sulla sinistra. La frase sulla convergenza ("picchi fino a m=5500 per tracce molto lunghe") è pesantemente tagliata fuori dal bordo.
-**Analisi:** Stessa dinamica della slide precedente. Troppi blocchi sovrapposti verticalmente (Intuizione, Formula matematica, Baseline, Nota sulla convergenza). L'equazione di Riemann prende molto spazio.
-**Soluzione suggerita:** Spostare il paragrafo "Convergenza adattiva" in basso a destra (sotto o dentro a "Ottimizzazione Hardware"), oppure asciugare notevolmente il testo introduttivo riducendo le spaziature interne.
+### Risultati: Balanced Accuracy 88%
+Il titolo deve essere solo "Risultati". Elimina completamente il box di "tradeoff clinico". La tabella dei risultati e la matrice di confusione possono rimanere impilate ma adesso va centrato tutto in centro slide. 
 
-### Slide 9/12 — La Sfida: Aggregazione dei Sub-Token
-**Problema:** Nessuno.
-**Analisi:** La slide che prima presentava problemi col diagramma TikZ ora è perfetta grazie allo scalebox inserito in precedenza. Anche la colonna sinistra è ben bilanciata e non genera alcun overflow in basso.
-**Soluzione suggerita:** Nessuna modifica.
+### Il Problema della Black-Box in Sanità
+Il titolo diventa "Tecniche di XAI per modelli profondi". Elimina il box "il paradosso della black-box" poiché lo dirò a voce. Commenta la didascalia con la soluzione. Aggiungi all'elenco puntato la parte della didascalia dell'immagine che parla di metodi classici. Lascia come didascialia della immagine la frase "confronto visivo diversi algoritmi di XAI". 
 
-### Slide 10/12 — Il Cruscotto Clinico: Reparto 701 Cardiochirurgia
-**Problema:** Nessuno.
-**Analisi:** Sebbene ci siano moltissime informazioni (due grandi figure affiancate), l'impaginazione orizzontale salva lo spazio. Didascalie e immagini rientrano perfettamente nei bordi della slide.
-**Soluzione suggerita:** Nessuna modifica strutturale.
+### Integrated Gradients e la Baseline [PAD]
+Elimina completamente i due box: "Verifica Convergenza" e "Ottimizzazione Hardware". Riposiziona il testo rimanente su tutta la larghezza andando ad avere una impaginazione simile alla slide "Il Problema: Length of Stay (LOS)". 
 
-### Slide 11/12 — Fattibilità Aziendale e Costi di Deployment
-**Problema:** Nessuno.
-**Analisi:** Tabella a sinistra e box testuale a destra sono molto eleganti, bilanciati e in perfetto allineamento.
-**Soluzione suggerita:** Nessuna modifica.
+### La Sfida: Aggregazione dei Sub-Token
+Qui manca un nodo allo schema, bisogna aggiungere un nodo finale in cui i nodi "Cardiology" e "visit" confluscono in "Cardiology visit". Come per gli altri nodi va riportato anche lo score che è di `+39.2`. Assicurati che, in altezza, il centro dello schema corrisponda con il centro del blocco sulla sinistra. 
 
-### Slide 12/12 — Conclusioni e Sviluppi Futuri
-**Problema:** Nessuno.
-**Analisi:** Layout ottimale, il testo "Grazie per l'attenzione." spicca chiaramente a destra e la colonna di sinistra è ben distanziata dal bordo inferiore.
-**Soluzione suggerita:** Nessuna modifica.
+### Costi di Deployment
+Metti la parte di elenco hardware come didascalia della tabella. Togli il box "Metriche Wall-Clock" e assicurati che la tabella sia ben centrata nella pagina. 
 
-### Slide 13 — (Backup) Hardware e Hyperparameter Tuning
-**Problema:** Overflow verticale del grafico in basso a destra.
-**Analisi:** L'immagine sulle metriche di loss (Train vs Val) ha dimensioni verticali eccessive. Supera il margine in basso, al punto che l'asse X e le etichette vengono tagliate dal bordo inferiore dello schermo.
-**Soluzione suggerita:** Rimpicciolire l'immagine settando un parametro `[height=...]` oppure `[width=0.8\linewidth]` più stretto per farla salire in sicurezza.
+### Conclusioni e Sviluppi Futuri
+Qui bisogna dividere in 3 slide e come precedentemente fatto, farò un sottoparagrafo per ogni slide. 
 
-### Slide 14 — (Backup) L'Esperimento Fallito: Data Augmentation
-**Problema:** Nessun clipping intrinseco o conflitto.
-**Analisi:** La colonna di sinistra è molto densa verso il basso, ma non impatta la leggibilità né collide con nulla, godendo dell'assenza di footer numerato per gli allegati.
-**Soluzione suggerita:** Va bene così (nessun intervento).
+#### Conclusioni
+Ritaglia la parte di "Risultati e Lezioni Apprese" e mettila in una slide isolata, insieme anche al box "Limite Epistemologico" ma cambia quel titolo perché quella parola non mi piace per niente. 
+
+#### Sviluppi Futuri
+Prendila così come è e facci una slide
+
+#### Saluto finale
+Semplicemente una slide con "Grazie a tutti per l'attenzione"
+
+ 
