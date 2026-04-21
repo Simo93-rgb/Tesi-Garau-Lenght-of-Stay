@@ -364,20 +364,20 @@
         WordPiece frammenta le parole in sub-token privi di significato, serve ricostruirle.
       \end{alertblock}
 
-      \vspace{0.8em}
+      \vspace{0.5em}
       \textbf{Step A — da 768 dimensioni a scalar:}\\
       Il vettore IG viene collassato in un
       singolo valore per token.
 
-      \vspace{0.4em}
+      \vspace{0.2em}
       \textbf{Step B — root sum dei \texttt{\#\#} fragments:}\\
       I sub-token marcati \texttt{\#\#} sommano il loro score
       al token radice $\to$ parola clinica intera.
 
-      \vspace{0.4em}
+      \vspace{0.2em}
       Token artificiali \texttt{[CLS]}, \texttt{[SEP]} esclusi.
 
-      \vspace{0.4em}
+      \vspace{0.3em}
       \begin{exampleblock}{Risultato}
         Ogni \textbf{azione clinica reale} ottiene un
         unico score aggregato, leggibile dal clinico.
