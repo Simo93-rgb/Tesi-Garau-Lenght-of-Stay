@@ -358,12 +358,13 @@
 
 % ── SLIDE 13: Aggregazione Sub-Token ─────────────────────────
 \begin{frame}{La Sfida: Aggregazione dei Sub-Token}
-  \begin{alertblock}{WordPiece frammenta le parole in sub-token privi di significato, serve ricostruirle.}
-  \end{alertblock}
-
-  \vspace{0.5em}
-  \begin{columns}[c]
+  \begin{columns}[c, onlytextwidth]
     \begin{column}{0.52\textwidth}
+      \begin{alertblock}{Il Problema}
+        WordPiece frammenta le parole in sub-token privi di significato, serve ricostruirle.
+      \end{alertblock}
+
+      \vspace{0.8em}
       \textbf{Step A — da 768 dimensioni a scalar:}\\
       Il vettore IG viene collassato in un
       singolo valore per token.
@@ -411,23 +412,17 @@
         \node[font=\tiny\bfseries\color{successgreen!70!black},
           below=0.1cm of fcardio] (lcardio) {score: $+20.28$};
 
-        \node[finalbox, below=1.2cm of vis]
-          (fvis) {\textbf{visit}};
-        \node[font=\tiny\bfseries\color{successgreen!70!black},
-          below=0.1cm of fvis] (lvis) {score: $+18.92$};
-
         % Nuovo nodo combinato
         \node[finalbox, minimum width=4cm, below=2.6cm of iolo]
           (fcombined) {\textbf{Cardiology visit}};
         \node[font=\tiny\bfseries\color{successgreen!70!black},
           below=0.1cm of fcombined] {score: $+39.20$};
 
-        \draw[arr] (card.south) -- (fcardio.north west);
-        \draw[arr] (iolo.south) -- (fcardio.north east);
-        \draw[arr] (vis.south)  -- (fvis.north);
-
-        \draw[arr] (fcardio.south) -- (fcombined.north west);
-        \draw[arr] (fvis.south) -- (fcombined.north east);
+        \draw[arr] (card.south west) -- (fcardio.north west);
+        \draw[arr] (iolo.south east) -- (fcardio.north east);
+        
+        \draw[arr] (fcardio.south west) -- (fcombined.north west);
+        \draw[arr] (vis.south east)  -- (fcombined.north east);
       \end{tikzpicture}}
       
       \vspace{0.2em}
