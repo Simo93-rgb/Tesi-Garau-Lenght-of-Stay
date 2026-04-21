@@ -291,53 +291,39 @@
 
 
 % ── SLIDE 10: Risultati Classificazione ───────────────────────
-\begin{frame}{Risultati: Balanced Accuracy 88\%}
-  \begin{columns}[T]
-    \begin{column}{0.55\textwidth}
-      \begin{block}{Confronto Embedding — Metriche Chiave}
-        \footnotesize
-        \renewcommand{\arraystretch}{1.3}
-        \begin{tabular}{lccc}
-          \toprule
-          \textbf{Embedding} & \textbf{Bal.\ Acc.} & \textbf{Recall} & \textbf{Prec.} \\
-          \midrule
-          Array Concat. & 83.44\% & 78.51\% & 45.24\% \\
-          Binning       & 87.16\% & 81.82\% & 57.23\% \\
-          \alert{\textbf{Storytelling}} & \alert{\textbf{89.69\%}} & \alert{\textbf{85.95\%}} & \alert{\textbf{61.54\%}} \\
-          \bottomrule
-        \end{tabular}
-      \end{block}
+\begin{frame}{Risultati}
+  \vspace{0.5em}
+  \begin{block}{Confronto Embedding — Metriche Chiave}
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lccc}
+      \toprule
+      \textbf{Embedding} & \textbf{Bal.\ Acc.} & \textbf{Recall} & \textbf{Prec.} \\
+      \midrule
+      Array Concat. & 83.44\% & 78.51\% & 45.24\% \\
+      Binning       & 87.16\% & 81.82\% & 57.23\% \\
+      \alert{\textbf{Storytelling}} & \alert{\textbf{89.69\%}} & \alert{\textbf{85.95\%}} & \alert{\textbf{61.54\%}} \\
+      \bottomrule
+    \end{tabular}
+  \end{block}
 
-      \vspace{0.5em}
-      \textbf{Matrice di confusione — Storytelling:}
-      \footnotesize
-      \renewcommand{\arraystretch}{1.3}
-      \begin{tabular}{cc|c|c|}
-        & & \multicolumn{2}{c|}{\textbf{Predetto}} \\
-        & & Normale & Critico \\
-        \cline{3-4}
-        \multirow{2}{*}{\textbf{Reale}} & Normale & 923 & 65 \\
-        \cline{3-4}
-        & Critico & \alert{17} & \textbf{104} \\
-        \cline{3-4}
-      \end{tabular}
-    \end{column}
-
-    \begin{column}{0.42\textwidth}
-      \begin{alertblock}{Il Trade-off Clinico}
-        \textbf{Recall 85.95\%} = pochi falsi negativi.
-
-        In ambito medico, \alert{non identificare} un paziente
-        critico è un danno grave: percorso inatteso, letti
-        occupati a sorpresa, dimissioni abortite.
-
-        \vspace{0.3em}
-        Grazie alla Focal Loss abbiamo solo 17 falsi negativi su 121 casi critici.
-        % Falsi positivi (Precision 61.54\%) = allerta
-        % preventiva: il costo è tollerabile e gestibile.
-      \end{alertblock}
-    \end{column}
-  \end{columns}
+  \vspace{1.5em}
+  \begin{center}
+    \textbf{Matrice di confusione — Storytelling:}\\
+    \vspace{0.5em}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{cc|c|c|}
+      & & \multicolumn{2}{c|}{\textbf{Predetto}} \\
+      & & Normale & Critico \\
+      \cline{3-4}
+      \multirow{2}{*}{\textbf{Reale}} & Normale & 923 & 65 \\
+      \cline{3-4}
+      & Critico & \alert{17} & \textbf{104} \\
+      \cline{3-4}
+    \end{tabular}
+  \end{center}
 \end{frame}
 
 % ── SLIDE 11: XAI — Black Box ──────────────────────────────────
