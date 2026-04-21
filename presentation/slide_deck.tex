@@ -334,7 +334,7 @@
 \end{frame}
 
 
-
+\section{Explainable AI}
 % ── SLIDE 12: Integrated Gradients ────────────────────────────
 \begin{frame}{Integrated Gradients e la Baseline \texttt{[PAD]}}
   \textbf{Intuizione:} misurare il contributo di ogni token
@@ -491,42 +491,44 @@
 \end{frame}
 
 % ── SLIDE 16: Conclusioni ─────────────────────────────────────
-\begin{frame}{Conclusioni e Sviluppi Futuri}
-  \begin{columns}[T]
-    \begin{column}{0.52\textwidth} % Leggermente allargata per far respirare il testo
-      \textbf{Risultati e Lezioni Apprese:}
-      \begin{itemize}
-        \item Pipeline end-to-end: XES $\to$ Storytelling $\to$ BERT $\to$ IG
-        \item Balanced Accuracy \textbf{89.69\%} (sbilanciamento gestito via Focal Loss)
-        \item \textbf{Cruscotto manageriale} ottenuto via ricomposizione semantica dei token
-        \item \textbf{Generalizzabilità:} modello robusto su terminologie locali
-      \end{itemize}
+\begin{frame}{Conclusioni}
+  \vspace{1em}
+  \textbf{Risultati e Lezioni Apprese:}
+  \begin{itemize}
+    \item Pipeline end-to-end: XES $\to$ Storytelling $\to$ BERT $\to$ IG
+    \item Balanced Accuracy \textbf{89.69\%} (sbilanciamento gestito via Focal Loss)
+    \item \textbf{Cruscotto manageriale} ottenuto via ricomposizione semantica dei token
+    \item \textbf{Generalizzabilità:} modello robusto su terminologie locali
+  \end{itemize}
 
-      \vspace{0.4em}
-      \begin{alertblock}{Limite Epistemologico}
-        IG e Attention Maps misurano \textbf{correlazione},
-        non causalità. La valutazione clinica finale
-        spetta sempre allo \textbf{\alert{specialista umano}}.
-      \end{alertblock}
-    \end{column}
+  \vspace{1.5em}
+  \begin{alertblock}{Limiti}
+    IG e Attention Maps misurano \textbf{correlazione},
+    non causalità. La valutazione clinica finale
+    spetta sempre allo \textbf{\alert{specialista umano}}.
+  \end{alertblock}
+\end{frame}
 
-    \begin{column}{0.45\textwidth}
-      \begin{block}{Sviluppi Futuri — TEXLOS}
-        Da analisi \textit{post-mortem} a classificazione
-        \textbf{runtime} dinamica:
-        \begin{itemize}
-          \item \textit{Next-Activity-Prediction} con calcolo IG parziali
-          \item XAI ad alta densità ai checkpoint quotidiani di degenza
-          \item Logiche manageriali \textbf{proattive} in tempo reale
-        \end{itemize}
-      \end{block}
+% ── SLIDE 17: Sviluppi Futuri ─────────────────────────────────
+\begin{frame}{Sviluppi Futuri}
+  \vspace{1.5em}
+  \begin{block}{Sviluppi Futuri — TEXLOS}
+    Da analisi \textit{post-mortem} a classificazione
+    \textbf{runtime} dinamica:
+    \begin{itemize}
+      \item \textit{Next-Activity-Prediction} con calcolo IG parziali
+      \item XAI ad alta densità ai checkpoint quotidiani di degenza
+      \item Logiche manageriali \textbf{proattive} in tempo reale
+    \end{itemize}
+  \end{block}
+\end{frame}
 
-      \vspace{1.5em}
-      \centering
-      \Large\textbf{Grazie per l'attenzione.}\\
-      \normalsize\vspace{0.3em}
-    \end{column}
-  \end{columns}
+% ── SLIDE 18: Saluto Finale ───────────────────────────────────
+\begin{frame}
+  \vfill
+  \centering
+  \Large\textbf{Grazie a tutti per l'attenzione.}
+  \vfill
 \end{frame}
 
 % ============================================================
@@ -614,8 +616,6 @@
 \end{frame}
 
 % ── SLIDE 19: XAI — Black Box ──────────────────────────────────
-\section{Explainable AI}
-
 \begin{frame}{(Backup)Tecniche di XAI per modelli profondi}
   \begin{columns}[c]
     \begin{column}{0.55\textwidth}
