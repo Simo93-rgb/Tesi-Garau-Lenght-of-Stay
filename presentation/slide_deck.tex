@@ -293,7 +293,7 @@
 % ── SLIDE 10: Risultati Classificazione ───────────────────────
 \begin{frame}{Risultati}
   \vspace{1.5em}
-  \begin{columns}[c]
+  \begin{columns}[T]
     \begin{column}{0.55\textwidth}
       \begin{block}{Confronto Embedding — Metriche Chiave}
         \centering
@@ -301,6 +301,7 @@
         \renewcommand{\arraystretch}{1.3}
         \begin{tabular}{lccc}
           \toprule
+          & & & \\[-1em] % Bilancia il \cmidrule dell'altra tabella
           \textbf{Embedding} & \textbf{Bal.\ Acc.} & \textbf{Recall} & \textbf{Prec.} \\
           \midrule
           Array Concat. & 83.44\% & 78.51\% & 45.24\% \\
@@ -316,14 +317,16 @@
         \centering
         \footnotesize
         \renewcommand{\arraystretch}{1.3}
-        \begin{tabular}{cc|c|c|}
-          & & \multicolumn{2}{c|}{\textbf{Predetto}} \\
+        \begin{tabular}{llcc}
+          \toprule
+          & & \multicolumn{2}{c}{\textbf{Predetto}} \\
+          \cmidrule{3-4}
           & & Normale & Critico \\
-          \cline{3-4}
+          \midrule
           \multirow{2}{*}{\textbf{Reale}} & Normale & 923 & 65 \\
-          \cline{3-4}
           & Critico & \alert{17} & \textbf{104} \\
-          \cline{3-4}
+          & & & \\[-1.55em] % Bilancia la terza riga dell'altra tabella
+          \bottomrule
         \end{tabular}
       \end{block}
     \end{column}
