@@ -358,11 +358,11 @@
 
 % ── SLIDE 13: Aggregazione Sub-Token ─────────────────────────
 \begin{frame}{La Sfida: Aggregazione dei Sub-Token}
-  \textbf{WordPiece frammenta} le parole cliniche in sub-token privi
-  di significato autonomo. \\ \alert{\textbf{Serve ricostruirle}}.
+  \begin{alertblock}{WordPiece frammenta le parole in sub-token privi di significato, serve ricostruirle.}
+  \end{alertblock}
 
   \vspace{0.5em}
-  \begin{columns}[T]
+  \begin{columns}[c]
     \begin{column}{0.52\textwidth}
       \textbf{Step A — da 768 dimensioni a scalar:}\\
       Il vettore IG viene collassato in un
@@ -385,8 +385,7 @@
 
     \begin{column}{0.45\textwidth}
       \centering
-      % scalebox: il diagramma tikz è ~6.8cm, la colonna ~5.7cm in 16:9
-      \scalebox{0.78}{%
+      \scalebox{0.68}{%
       \begin{tikzpicture}[
         node distance=1.5cm,
         box/.style={rectangle, draw=primary!80, fill=primary!8!lightbg,
@@ -410,19 +409,29 @@
         \node[finalbox, below=1.2cm of card, xshift=1.2cm]
           (fcardio) {\textbf{Cardiology}};
         \node[font=\tiny\bfseries\color{successgreen!70!black},
-          below=0.1cm of fcardio] {score: $+20.28$};
+          below=0.1cm of fcardio] (lcardio) {score: $+20.28$};
 
         \node[finalbox, below=1.2cm of vis]
           (fvis) {\textbf{visit}};
         \node[font=\tiny\bfseries\color{successgreen!70!black},
-          below=0.1cm of fvis] {score: $+18.92$};
+          below=0.1cm of fvis] (lvis) {score: $+18.92$};
+
+        % Nuovo nodo combinato
+        \node[finalbox, minimum width=4cm, below=2.6cm of iolo]
+          (fcombined) {\textbf{Cardiology visit}};
+        \node[font=\tiny\bfseries\color{successgreen!70!black},
+          below=0.1cm of fcombined] {score: $+39.20$};
 
         \draw[arr] (card.south) -- (fcardio.north west);
         \draw[arr] (iolo.south) -- (fcardio.north east);
         \draw[arr] (vis.south)  -- (fvis.north);
+
+        \draw[arr] (fcardio.south) -- (fcombined.north west);
+        \draw[arr] (fvis.south) -- (fcombined.north east);
       \end{tikzpicture}}
+      
       \vspace{0.2em}
-      {\small\itshape Ricomposizione ``Cardiology visit''.}
+      {\small\itshape Ricomposizione completa del task clinico.}
     \end{column}
   \end{columns}
 \end{frame}
