@@ -261,8 +261,8 @@
   \textbf{L'Intuizione:} tradurre la traccia in un \textbf{testo in linguaggio naturale} massimizza 
   la capacità di BERT di estrarre contesto bidirezionale.
 
-  \vspace{0.0em}
-  \begin{columns}[T]
+  \vspace{1.5em}
+  \begin{columns}[c]
     \begin{column}{0.48\textwidth}
       \begin{block}{Da Log XES\ldots}
         
@@ -286,13 +286,6 @@
       \end{exampleblock}
     \end{column}
   \end{columns}
-
-  \vspace{0.0em}
-  \textbf{Requisiti Ingegneristici Algoritmo:}
-  \begin{itemize}
-      \item \textbf{Gestione Tempo:} Iniezione esatta del \textit{delta in secondi} (nessuna approssimazione).
-      \item \textbf{Eventi Simultanei:} Aggregazione per evitare ridondanza e non sovraccaricare l'Attention di BERT con token identici.
-  \end{itemize}
 \end{frame}
 
 
