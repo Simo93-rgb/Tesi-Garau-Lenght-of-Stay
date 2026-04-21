@@ -333,78 +333,27 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 11: XAI — Black Box ──────────────────────────────────
-\section{Explainable AI}
 
-\begin{frame}{Tecniche di XAI per modelli profondi}
-  \begin{columns}[c]
-    \begin{column}{0.55\textwidth}
-      \textbf{Perché le tecniche classiche falliscono sul testo?}
-      
-      \vspace{0.5em}
-      \begin{itemize}
-        \item \textbf{Vanilla Gradient:} soffre di \textit{gradient shattering}. Il rumore nei gradienti locali genera attribuzioni altamente instabili.
-        \item \textbf{Grad-CAM:} ideato per immagini (CNN), incompatibile con l'architettura \textit{Self-Attention}.
-        \item \textbf{SmoothGrad / Blur IG:} sfocare un pixel continuo ha senso, ma perturbare casualmente un \textit{token discreto} genera vettori privi di significato semantico.
-      \end{itemize}
-
-      % \vspace{0.5em}
-      % \textbf{Soluzione:} \alert{Integrated Gradients (IG)}\\
-      % Sostituisce la perturbazione con un'integrazione da una \textit{baseline} fissa, garantendo validità assiomatica sulle sequenze testuali.
-    \end{column}
-
-    \begin{column}{0.42\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{comparison_with_a_dog.png}
-      {\small\itshape Confronto visivo diversi algoritmi di XAI.}
-    \end{column}
-  \end{columns}
-\end{frame}
 
 % ── SLIDE 12: Integrated Gradients ────────────────────────────
 \begin{frame}{Integrated Gradients e la Baseline \texttt{[PAD]}}
-  \begin{columns}[T]
-    \begin{column}{0.55\textwidth}
-      \textbf{Intuizione:} misurare il contributo di ogni token
-      integrando i gradienti lungo un percorso logico dalla
-      \alert{baseline} (assenza d'informazione) all'input reale.
+  \textbf{Intuizione:} misurare il contributo di ogni token
+  integrando i gradienti lungo un percorso logico dalla
+  \alert{baseline} (assenza d'informazione) all'input reale.
 
-      \vspace{0.4em}
-      \begin{block}{Approssimazione dell'Integrale}
-        \footnotesize
-        L'integrale continuo non è calcolabile su reti profonde.\\
-        Si utilizza un'approssimazione discreta a \textbf{$m$ step} 
-        (frazioni spaziali equidistanti tra baseline e input).
-      \end{block}
+  \vspace{1.5em}
+  \begin{block}{Approssimazione dell'Integrale}
+    L'integrale continuo non è calcolabile su reti profonde.\\
+    Si utilizza un'approssimazione discreta a \textbf{$m$ step} 
+    (frazioni spaziali equidistanti tra baseline e input).
+  \end{block}
 
-      \begin{block}{La Baseline: Lo "Zero Semantico"}
-        \footnotesize
-        $x' = $ vettore di token \texttt{[PAD]} (ID=0).\\
-        Garantisce a BERT un punto d'origine privo di informazione 
-        clinica, rispettando l'\textbf{Assioma di Sensibilità}.
-      \end{block}
-    \end{column}
-
-    \begin{column}{0.42\textwidth}
-      \begin{alertblock}{Verifica di Convergenza (Completeness)}
-        \footnotesize
-        \centering $\sum \text{Attribuzioni} \approx f(x) - f(x')$ \\[0.4em]
-        \raggedright Garantisce che la somma spieghi \textit{esattamente} la differenza di predizione. \textbf{Tolleranza:} Errore Relativo $\le 5\%$.
-      \end{alertblock}
-
-      \vspace{0.0em}
-      \begin{exampleblock}{Ottimizzazione Hardware (GPU)}
-        \footnotesize
-        Il default di libreria (Gauss-Legendre) satura la CPU.\\
-        \textbf{Soluzione adottata: Riemann Trapezoid}
-        \begin{itemize}
-          \item Vettorializzazione 100\% su GPU.
-          \item Tempi: da \alert{15~s} a \textbf{2.5~s / traccia}.
-          \item Algoritmo adattivo per garantire la convergenza a tutte le tracce con $m \text{ steps} \in \{1500,5500\}$
-        \end{itemize}
-      \end{exampleblock}
-    \end{column}
-  \end{columns}
+  \vspace{1em}
+  \begin{block}{La Baseline: Lo "Zero Semantico"}
+    $x' = $ vettore di token \texttt{[PAD]} (ID=0).\\
+    Garantisce a BERT un punto d'origine privo di informazione 
+    clinica, rispettando l'\textbf{Assioma di Sensibilità}.
+  \end{block}
 \end{frame}
 
 % ── SLIDE 13: Aggregazione Sub-Token ─────────────────────────
@@ -660,5 +609,32 @@
   \end{columns}
 \end{frame}
 
+% ── SLIDE 19: XAI — Black Box ──────────────────────────────────
+\section{Explainable AI}
+
+\begin{frame}{(Backup)Tecniche di XAI per modelli profondi}
+  \begin{columns}[c]
+    \begin{column}{0.55\textwidth}
+      \textbf{Perché le tecniche classiche falliscono sul testo?}
+      
+      \vspace{0.5em}
+      \begin{itemize}
+        \item \textbf{Vanilla Gradient:} soffre di \textit{gradient shattering}. Il rumore nei gradienti locali genera attribuzioni altamente instabili.
+        \item \textbf{Grad-CAM:} ideato per immagini (CNN), incompatibile con l'architettura \textit{Self-Attention}.
+        \item \textbf{SmoothGrad / Blur IG:} sfocare un pixel continuo ha senso, ma perturbare casualmente un \textit{token discreto} genera vettori privi di significato semantico.
+      \end{itemize}
+
+      % \vspace{0.5em}
+      % \textbf{Soluzione:} \alert{Integrated Gradients (IG)}\\
+      % Sostituisce la perturbazione con un'integrazione da una \textit{baseline} fissa, garantendo validità assiomatica sulle sequenze testuali.
+    \end{column}
+
+    \begin{column}{0.42\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{comparison_with_a_dog.png}
+      {\small\itshape Confronto visivo diversi algoritmi di XAI.}
+    \end{column}
+  \end{columns}
+\end{frame}
 % ============================================================
 \end{document}
