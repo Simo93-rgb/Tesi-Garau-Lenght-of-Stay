@@ -324,7 +324,7 @@
           & & Normale & Critico \\
           \midrule
           \multirow{2}{*}{\textbf{Reale}} & Normale & 923 & 65 \\
-          & Critico & \alert{17} & \textbf{104} \\
+          & Critico & \alert{\textbf{17}} & \textbf{104} \\
           & & & \\[-1.55em] % Bilancia la terza riga dell'altra tabella
           \bottomrule
         \end{tabular}
@@ -336,30 +336,27 @@
 % ── SLIDE 11: XAI — Black Box ──────────────────────────────────
 \section{Explainable AI}
 
-\begin{frame}{Il Problema della Black-Box in Sanità}
-  \begin{columns}[T]
+\begin{frame}{Tecniche di XAI per modelli profondi}
+  \begin{columns}[c]
     \begin{column}{0.55\textwidth}
-      \begin{alertblock}{Il Paradosso della Black-Box}
-        Una rete neurale è un oracolo opaco: restituisce
-        una probabilità, ma \alert{non spiega perché}.\\
-        In sanità questa opacità è inaccettabile.
-      \end{alertblock}
-
-      {\footnotesize
       \textbf{Perché le tecniche classiche falliscono sul testo?}
+      
+      \vspace{0.5em}
       \begin{itemize}
-        \item \textbf{Grad-CAM:} ideato per immagini (CNN), incompatibile con la \textit{Self-Attention}.
+        \item \textbf{Vanilla Gradient:} soffre di \textit{gradient shattering}. Il rumore nei gradienti locali genera attribuzioni altamente instabili.
+        \item \textbf{Grad-CAM:} ideato per immagini (CNN), incompatibile con l'architettura \textit{Self-Attention}.
         \item \textbf{SmoothGrad / Blur IG:} sfocare un pixel continuo ha senso, ma perturbare casualmente un \textit{token discreto} genera vettori privi di significato semantico.
       \end{itemize}
 
-      \textbf{Soluzione:} \alert{Integrated Gradients (IG)}\\
-      Sostituisce la perturbazione con un'integrazione da una \textit{baseline} fissa, garantendo validità assiomatica sulle sequenze testuali. \par}
+      % \vspace{0.5em}
+      % \textbf{Soluzione:} \alert{Integrated Gradients (IG)}\\
+      % Sostituisce la perturbazione con un'integrazione da una \textit{baseline} fissa, garantendo validità assiomatica sulle sequenze testuali.
     \end{column}
 
     \begin{column}{0.42\textwidth}
       \centering
       \includegraphics[width=\linewidth]{comparison_with_a_dog.png}
-      {\small\itshape I metodi classici (es. Vanilla Gradient) soffrono di\\ \textit{gradient shattering}. IG fornisce attribuzioni\\ stabili mediando queste oscillazioni.}
+      {\small\itshape Confronto visivo diversi algoritmi di XAI.}
     \end{column}
   \end{columns}
 \end{frame}
