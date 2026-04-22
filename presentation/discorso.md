@@ -42,13 +42,17 @@ Come mostrato in questo schema architetturale, il flusso dei dati procede dal ba
 **Discorso:**
 "Una delle sfide ingegneristiche principali è stata: come diamo in pasto a BERT, un modello linguistico, dei log formati da azioni e delta temporali? Abbiamo testato tre filosofie: l'uso di array concatenati, il binning temporale, e infine lo Storytelling."
 
-### Slide 9: L'Approccio Vincente: Il Paradigma "Storytelling"
+### Slide 8.1: Da XES a Storytelling
 **Discorso:**
-"L'approccio vincente si è rivelato proprio lo Storytelling, ispirato fortemente da una ricerca dell'università di Pisa: LEGOLAS. Abbiamo tradotto semanticamente le tracce XES in veri e propri paragrafi narrativi in inglese. Questo permette a BERT di sfruttare al massimo la sua capacità nativa di estrarre contesto. A livello algoritmico, il tempo viene gestito iniettando i delta esatti in secondi e gli eventi simultanei vengono aggregati dinamicamente per non sovraccaricare l'Attention."
+"Ma in che modo otteniamo una narrazione clinica dai dati tabulari? Il flusso logico è automatizzato da uno script deterministico. Partiamo dal log XES, dove ci scontriamo col problema delle terminologie locali. Grazie all'uso preliminare delle API di Google Translate, mappiamo il nomenclatore ospedaliero italiano su una terminologia medica inglese standardizzata. Successivamente, l'algoritmo raggruppa gli eventi simultanei. Infine, un sistema di pattern matching basato su template sintattici inietta i delta temporali esatti in secondi, creando una narrativa strutturata."
 
-### Slide 10: Risultati: Balanced Accuracy 88%
+### Slide 9: L'Approccio Vincente: Il Paradigma Storytelling
 **Discorso:**
-"I risultati ci hanno dato ragione. L'approccio Storytelling ha raggiunto una Balanced Accuracy dell'88%, superando le altre metodologie. Ma in sanità il trade-off clinico impone di minimizzare i falsi negativi: non identificare un paziente che diventerà critico è un danno grave. Grazie all'uso combinato di Storytelling e Focal Loss, il modello ha commesso solo 17 falsi negativi su 121 casi critici reali."
+"L'idea di fondo, fortemente ispirata da una ricerca del 2025 del team di Pasquadibisceglie et al., è di trasformare la natura formale dei log clinici in linguaggio naturale. Questo permette a BERT di sfruttare a pieno la sua architettura nativa, pensata proprio per trovare e processare pattern semantici bidirezionali nel testo. Come vedete nell'esempio, i delta temporali vengono espressi in secondi e le azioni contemporanee vengono descritte come simultanee per non disorientare il meccanismo di Self-Attention."
+
+### Slide 10: Risultati: L'Efficacia di BERT e Storytelling
+**Discorso:**
+"I risultati empirici hanno confermato la nostra intuizione: come vedete nella tabella, l'approccio Storytelling ha sfiorato il 90% di Balanced Accuracy, superando nettamente le metodologie di embedding tradizionali. Ma c'è un aspetto ancora più rilevante per il dominio sanitario. Il trade-off clinico ci impone di minimizzare a tutti i costi i falsi negativi: non identificare un paziente che risulterà critico è un danno inaccettabile. Come si nota dalla matrice di confusione, grazie all'uso combinato di Storytelling e Focal Loss, il modello ha commesso solamente 17 falsi negativi su 121 casi critici reali. Questo dimostra che la rete non solo è accurata, ma è sicura e clinicamente affidabile."
 
 ### Slide 11: Sezione "Explainable AI"
 **Discorso:**

@@ -287,7 +287,7 @@
 
 % ── SLIDE 7: La Ricerca dell'Embedding Ideale ─────────────────
 \begin{frame}{La Ricerca dell'Embedding Ideale}
-  Per interfacciare i log clinici testuali e temporali con il Transformer, 
+  Per interfacciare i log clinici con il Transformer  stato utilizzato un parsificatore custom e infine 
   sono state testate \textbf{tre distinte filosofie di embedding}:
 
   \vspace{0.3em}
@@ -326,10 +326,44 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 8: L'Approccio Vincente: Il Paradigma ``Storytelling'' ──────────────
-\begin{frame}{L'Approccio Vincente: Il Paradigma ``Storytelling''}
+% ── SLIDE 8.1: Da XES a Storytelling ─────────────────────────
+\begin{frame}{Da Log XES a Narrazione Clinica}
+  \vspace{1.5em}
+  \centering
+  \scalebox{0.80}{%
+  \begin{tikzpicture}[
+    node distance=1.2cm and 0.5cm,
+    box/.style={rectangle, draw=primary!80, fill=primary!8!lightbg,
+      thick, minimum height=1.2cm, minimum width=2.4cm,
+      rounded corners=3pt, align=center, font=\normalsize\bfseries},
+    arr/.style={-{Stealth[scale=1.2]}, thick, draw=darktext!80}
+  ]
+
+  \node[box] (xes) {Tracce XES};
+  \node[box, right=of xes] (translate) {Traduzione\\ \footnotesize(API Google)};
+  \node[box, right=of translate] (group) {Raggruppamento\\ \footnotesize(Eventi simultanei)};
+  \node[box, right=of group] (template) {Pattern Matching\\ \footnotesize(Template)};
+  \node[box, right=of template, draw=successgreen!70!black, fill=successgreen!10] (story) {Testo Narrativo\\ \footnotesize(Storytelling)};
+
+  \draw[arr] (xes) -- (translate);
+  \draw[arr] (translate) -- (group);
+  \draw[arr] (group) -- (template);
+  \draw[arr] (template) -- (story);
+  
+  \end{tikzpicture}}
+  
+  \vspace{2.5em}
+  \begin{itemize}
+      \item \textbf{Traduzione Automatica:} Passaggio dal nomenclatore locale a una terminologia medica inglese unificata.
+      \item \textbf{Compressione Temporale:} Gli eventi occorsi al medesimo secondo vengono aggregati (\textit{simultaneous execution}).
+      \item \textbf{Generazione Narrativa:} Un algoritmo deterministico \texttt{story\_generator.py} inietta i delta temporali in paragrafi strutturati.
+  \end{itemize}
+\end{frame}
+
+% ── SLIDE 8.2: L'Approccio Vincente: Il Paradigma Storytelling ──────────────
+\begin{frame}{L'Approccio Vincente: Il Paradigma Storytelling}
   \textbf{L'Intuizione:} tradurre la traccia in un \textbf{testo in linguaggio naturale} massimizza 
-  la capacità di BERT di estrarre contesto bidirezionale.
+  la capacità di BERT di estrarre contesto.
 
   \vspace{1.5em}
   \begin{columns}[c]
@@ -361,8 +395,8 @@
 
 
 % ── SLIDE 10: Risultati Classificazione ───────────────────────
-\begin{frame}{Risultati}
-  \vspace{1.5em}
+\begin{frame}{Risultati: L'Efficacia di BERT e Storytelling}
+  \vspace{0.5em}
   \begin{columns}[T]
     \begin{column}{0.55\textwidth}
       \begin{block}{Confronto Embedding — Metriche Chiave}
@@ -383,7 +417,7 @@
     \end{column}
 
     \begin{column}{0.42\textwidth}
-      \begin{block}{Matrice di Confusione}
+      \begin{block}{Matrice di Confusione (Storytelling)}
         \centering
         \footnotesize
         \renewcommand{\arraystretch}{1.3}
@@ -401,6 +435,14 @@
       \end{block}
     \end{column}
   \end{columns}
+
+  \vspace{1.5em}
+  \begin{exampleblock}{Takeaway Clinico}
+    \begin{itemize}
+      \item[\faCheckCircle] L'approccio narrativo massimizza le capacità predittive di \textbf{BERT} ($\approx \textbf{90\%}$ Bal.\ Accuracy).
+      \item[\faCheckCircle] \textbf{Trade-off Clinico Ottimizzato:} grazie alla Focal Loss, il modello commette \textbf{solo 17 Falsi Negativi} su 121 casi critici reali, riducendo drasticamente il rischio di mancata identificazione.
+    \end{itemize}
+  \end{exampleblock}
 \end{frame}
 
 
