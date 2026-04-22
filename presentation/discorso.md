@@ -29,9 +29,14 @@ La nostra conclusione è stata chiara: per estendere e superare i limiti delle m
 **Discorso:**
 "Abbiamo lavorato su un dataset reale composto da 7.393 casi e oltre 88.000 eventi. L'analisi esplorativa ha subito evidenziato una prima grande sfida: il forte sbilanciamento delle classi. L'89% dei casi appartiene alla classe normale, mentre solo l'11% ricade nel long-LOS. Come mostrano i boxplot, i casi critici presentano una variabilità di eventi molto maggiore. In questo scenario, una funzione di costo standard tenderebbe a far collassare il modello sulla classe maggioritaria."
 
-### Slide 7: Il Modello: BERT e Focal Loss
+### Slide 7: Il Modello: L'Architettura BERT
 **Discorso:**
-"Per gestire lo sbilanciamento abbiamo integrato la Focal Loss al cuore predittivo del nostro sistema, ovvero un modello *bert-base-uncased* (preferito ai modelli clinici pre-addestrati a causa del 'vocabulary mismatch' con i nostri log locali). La Focal Loss abbatte il gradiente degli esempi facili, forzando il modello a concentrarsi e imparare i pattern dei casi rari del long-LOS."
+"Il cuore predittivo del nostro sistema è un modello *bert-base-uncased*. Abbiamo preferito questo modello base rispetto a modelli clinici pre-addestrati (come ClinicalBERT) a causa di un severo 'vocabulary mismatch' sulle nomenclature locali, molto specifiche per ogni struttura ospedaliera.
+Come mostrato in questo schema architetturale, il flusso dei dati procede dal basso verso l'alto. La sequenza tokenizzata, comprendente i token speciali, viene elaborata in parallelo dall'encoder del Transformer. Da questo, estraiamo unicamente il vettore risultante associato al token speciale `[CLS]`, che in BERT funge da aggregatore semantico dell'intera traccia clinica. Questa rappresentazione compatta viene passata alla nostra Classification Head, composta da un layer lineare con Dropout, la quale tramite una funzione di attivazione Sigmoide restituisce la probabilità finale di appartenenza alla classe critica o normale."
+
+### Slide 7.1: Il Modello: La Focal Loss
+**Discorso:**
+"Tuttavia, addestrare questo modello non è stato banale a causa del forte sbilanciamento delle classi visto in precedenza. Per questo abbiamo integrato la Focal Loss al momento dell'addestramento. Questa particolare funzione abbatte il gradiente degli esempi facili (ossia la classe dominante), forzando BERT a concentrarsi e imparare i pattern dei casi rari e complessi del long-LOS."
 
 ### Slide 8: La Ricerca dell'Embedding Ideale
 **Discorso:**

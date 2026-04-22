@@ -218,15 +218,51 @@
 
 % ── SLIDE 9: BERT ─────────────────────────────────────────────
 \begin{frame}{Il Modello: L'Architettura BERT}
-  \textbf{Architettura:} \texttt{bert-base-uncased} + classification head
-  
-  \vspace{1em}
-  \begin{itemize}
-    \item \textbf{110M parametri}, tokenizer WordPiece
-    \item \textbf{Perché non ClinicalBERT?} \alert{Vocabulary mismatch}:\\
-          nomenclature locali non standardizzate e soggette a variabilità di reparto
-    \item \textbf{Setup (Stratified 5-Fold CV):} \texttt{lr}=$5\text{e-}5$, batch=22, early stopping epoca 10
-  \end{itemize}
+  \begin{columns}[c]
+    \begin{column}{0.48\textwidth}
+      \textbf{Architettura Base:}\\
+      \texttt{bert-base-uncased} (110M parametri) con Classification Head.
+      
+      \vspace{1.5em}
+      \begin{block}{Scelte Architetturali}
+        \begin{itemize}
+          \item \textbf{No ClinicalBERT:} Evitato il \alert{Vocabulary mismatch} causato dalle nomenclature ospedaliere locali.
+          \item \textbf{Setup:} Cross-Validation (5-Fold Stratificata).
+        \end{itemize}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \centering
+      \scalebox{0.70}{%
+      \begin{tikzpicture}[
+          node distance=1.0cm and 0cm,
+          % Stili dei nodi
+          input/.style={rectangle, draw=black!70, thick, fill=gray!10, text width=5cm, align=center, minimum height=1cm, rounded corners},
+          bert/.style={rectangle, draw=black!80, thick, fill=successgreen!15, text width=5.5cm, align=center, minimum height=1.8cm, rounded corners},
+          cls/.style={rectangle, draw=black!70, thick, fill=primary!15, text width=4cm, align=center, minimum height=1cm, rounded corners},
+          head/.style={rectangle, draw=black!80, thick, fill=accent!20, text width=4.5cm, align=center, minimum height=1.2cm, rounded corners},
+          output/.style={rectangle, draw=black!70, thick, fill=alertred!15, text width=3.5cm, align=center, minimum height=1cm, rounded corners},
+          % Stile delle frecce
+          arrow/.style={-{Stealth[scale=1.2]}, thick, draw=black!80}
+      ]
+
+      % Definizione dei nodi (Flusso dal basso verso l'alto)
+      \node[input] (input) {Input Tokens\\ \small \texttt{[CLS] Token1 Token2 ... [SEP]}};
+      \node[bert, above=of input] (bert) {\textbf{Modello BERT}\\ \small (Transformer Encoder Base)};
+      \node[cls, above=of bert] (cls) {Rappresentazione \texttt{[CLS]}\\ \small (Vettore contestuale)};
+      \node[head, above=of cls] (classifier) {\textbf{Classification Head}\\ \small (Linear Layer + Dropout)};
+      \node[output, above=of classifier] (output) {Output Binario\\ \small (Sigmoide: Classe 0 / 1)};
+
+      % Connessioni (Frecce)
+      \draw[arrow] (input) -- (bert);
+      \draw[arrow] (bert) -- node[right, font=\footnotesize, xshift=2mm] {Estrazione pooler} (cls);
+      \draw[arrow] (cls) -- (classifier);
+      \draw[arrow] (classifier) -- (output);
+
+      \end{tikzpicture}}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 % ── SLIDE 10: Focal Loss ──────────────────────────────────────
