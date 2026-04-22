@@ -56,7 +56,11 @@ Come mostrato in questo schema architetturale, il flusso dei dati procede dal ba
 
 ### Slide 11: Sezione "Explainable AI"
 **Discorso:**
-"Tuttavia, avere un modello accurato non basta per il deploy in corsia."
+"Tuttavia, avere un modello accurato non basta per il deploy in corsia. Dobbiamo capire come la rete prende le sue decisioni."
+
+### Slide 11.1: Explainable AI: Oltre l'Attention
+**Discorso:**
+"L'architettura Transformer, avendo nativamente il meccanismo di Self-Attention, teoricamente ci permette di 'vedere' a cosa ha prestato attenzione il modello per fare la sua predizione. Purtroppo, questo valore da solo è troppo sintetico e non sempre allineato alla reale importanza causale del token per la classificazione finale. In ambito sanitario, l'attention non è sufficiente. Per superare l'opacità del modello e soddisfare i rigorosi limiti normativi europei e nazionali imposti sulla trasparenza dei sistemi AI in medicina, serve un algoritmo di spiegabilità formale e matematicamente riconosciuto."
 
 ### Slide 12: Il Problema della Black-Box in Sanità
 **Discorso:**
@@ -82,9 +86,18 @@ Come mostrato in questo schema architetturale, il flusso dei dati procede dal ba
 **Discorso:**
 "Abbiamo dimostrato non solo la validità teorica, ma anche la reale fattibilità aziendale del sistema. Come mostrano le metriche Wall-Clock, l'overhead totale per processare l'intera pipeline è di soli 30 minuti. Questo garantisce che il sistema sia sostenibile, in locale su hardware di fascia consumer invece che su macchine cloud ad alte prestazioni e alti costi operativi. Questo strizza anche un occhio alla privacy: i dati non devono per forza uscire dall'ambiente protetto dell'ospedale."
 
-### Slide 18: Conclusioni e Sviluppi Futuri
+### Slide 18: Conclusioni
 **Discorso:**
-"In sintesi, abbiamo realizzato una pipeline end-to-end efficace. Ribadiamo sempre che questi modelli misurano forti correlazioni e non causalità: la valutazione spetta sempre allo specialista umano. Per gli sviluppi futuri, puntiamo a evolvere il sistema passando a una classificazione dinamica in runtime ai vari checkpoint di degenza, trasformando così il sistema da predittivo a diagnostico. Grazie a tutti per l'attenzione. Sono a disposizione per le vostre domande."
+"In sintesi, abbiamo realizzato una pipeline end-to-end efficace. L'uso di BERT e Integrated Gradients permette di individuare i colli di bottiglia nei processi ospedalieri. Ribadiamo sempre che questi modelli misurano forti correlazioni e non causalità: la valutazione finale spetta sempre allo specialista umano."
+
+### Slide 18.1: Sviluppi Futuri dell'Architettura AI
+**Discorso:**
+"Dal punto di vista puramente ingegneristico e algoritmico, ci sono ampi margini di miglioramento. In futuro si potrebbe espandere il dataset includendo log di altri ospedali per testare la generalizzabilità del modello. Si potranno sperimentare Transformer più recenti come RoBERTa o perfino LLM compatti. Inoltre, un'architettura 'Mixture of Experts', con una rete dedicata per ogni singolo reparto ospedaliero, potrebbe abbattere ulteriormente gli errori di classificazione."
+
+### Slide 18.2: Il Contesto Più Ampio: Il Progetto TEXLOS
+**Discorso:**
+"Per concludere, ci tengo a sottolineare che la metodologia discussa in questa tesi non è fine a se stessa, ma è il motore analitico di un progetto molto più ampio chiamato TEXLOS, pubblicato sulla rivista scientifica 'Frontiers in Artificial Intelligence'. L'obiettivo di TEXLOS è fornire un framework di Business Process Management che operi in corso d'opera. Il focus si sposta dall'analisi 'post-mortem' all'anticipazione online, studiando ad esempio l'impatto dei servizi diagnostici esterni e fornendo Next-Activity-Prediction per il controllo proattivo della degenza. E proprio la validazione umana da parte dei medici ha confermato il potenziale di questo strumento.
+Grazie a tutti per l'attenzione. Sono a disposizione per le vostre domande."
 
 ***
 

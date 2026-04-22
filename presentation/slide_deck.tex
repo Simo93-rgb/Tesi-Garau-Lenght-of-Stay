@@ -417,7 +417,7 @@
     \end{column}
 
     \begin{column}{0.42\textwidth}
-      \begin{block}{Matrice di Confusione (Storytelling)}
+      \begin{block}{Matrice di Confusione}
         \centering
         \footnotesize
         \renewcommand{\arraystretch}{1.3}
@@ -440,14 +440,33 @@
   \begin{exampleblock}{Takeaway Clinico}
     \begin{itemize}
       \item[\faCheckCircle] L'approccio narrativo massimizza le capacità predittive di \textbf{BERT} ($\approx \textbf{90\%}$ Bal.\ Accuracy).
-      \item[\faCheckCircle] \textbf{Trade-off Clinico Ottimizzato:} grazie alla Focal Loss, il modello commette \textbf{solo 17 Falsi Negativi} su 121 casi critici reali, riducendo drasticamente il rischio di mancata identificazione.
+      \item[\faCheckCircle] \textbf{Trade-off Clinico Ottimizzato:} grazie alla Focal Loss, il modello commette \textbf{solo 17 Falsi Negativi} su 121 casi critici reali, riducendo il rischio di mancata identificazione.
     \end{itemize}
   \end{exampleblock}
 \end{frame}
 
 
 \section{Explainable AI}
-% ── SLIDE 12: Integrated Gradients ────────────────────────────
+
+% ── SLIDE 11.1: Approccio alla XAI ────────────────────────────
+\begin{frame}{Explainable AI: Oltre l'Attention}
+  I Transformer possiedono nativamente il meccanismo di \textbf{Self-Attention}, che 
+  permette teoricamente di "vedere" su quali token il modello si concentra.
+  
+  \vspace{1em}
+  \begin{alertblock}{Il Limite dell'Attention}
+    Sebbene l'Attention fornisca indizi utili (e sia superiore all'ispezione di una rete densa), 
+    restituisce un valore troppo \textbf{sintetico}. Non è sempre una misura affidabile della 
+    reale importanza causale del token per la classificazione finale.
+  \end{alertblock}
+
+  \vspace{1em}
+  \begin{block}{La Necessità di un Algoritmo Formale}
+    Per soddisfare i rigorosi \textbf{limiti normativi europei e nazionali} 
+    sulla trasparenza dei sistemi AI in ambito sanitario, è fondamentale
+    adottare un algoritmo di spiegabilità matematicamente e clinicamente riconosciuto.
+  \end{block}
+\end{frame}
 \begin{frame}{Integrated Gradients e la Baseline \texttt{[PAD]}}
   \textbf{Intuizione:} misurare il contributo di ogni token
   integrando i gradienti lungo un percorso logico dalla
@@ -621,18 +640,32 @@
   \end{alertblock}
 \end{frame}
 
-% ── SLIDE 17: Sviluppi Futuri ─────────────────────────────────
-\begin{frame}{Sviluppi Futuri}
+% ── SLIDE 17.1: Sviluppi Futuri ─────────────────────────────────
+\begin{frame}{Sviluppi Futuri dell'Architettura AI}
   \vspace{1em}
-  \textbf{Progetto TEXLOS e Anticipazione Online:} \\
-  L'approccio \textbf{Storytelling + IG} sposta il focus dal consolidamento dell'end-point finale verso l'anticipazione online della XAI.
-  
-  \vspace{1.5em}
-  \begin{block}{Da Analisi "Post-Mortem" a Classificazione "Runtime"}
+  \begin{block}{Miglioramenti Modellistici e Dati}
     \begin{itemize}
-      \item \textbf{Calcolo in Diretta:} Estrazione di IG parziali ai vari checkpoint quotidiani della degenza.
-      \item \textbf{Next-Activity-Prediction:} Integrazione di XAI ad alta densità per anticipare il percorso clinico.
-      \item \textbf{Controllo Proattivo:} Aggiustamento di rotta in tempo reale per ottimizzare le logiche manageriali e l'efficienza clinica.
+      \item \textbf{Ampliamento del Dataset:} Integrare log clinici provenienti da altre strutture ospedaliere per incrementare la variabilità statistica e consolidare la generalizzabilità del modello.
+      \item \textbf{Modelli Alternativi:} Sperimentare Transformer di nuova generazione (es. RoBERTa o LLM compatti) per catturare pattern semantici ancora più complessi nella narrazione testuale.
+      \item \textbf{Mixture of Experts (MoE):} Sviluppare un \textit{ensemble} di reti specializzate per singolo reparto (es. un esperto per Cardiologia, uno per Ortopedia) per massimizzare l'accuratezza predittiva.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% ── SLIDE 17.2: TEXLOS ──────────────────────────────────────────
+\begin{frame}{Il Contesto Più Ampio: Il Progetto TEXLOS}
+  \vspace{0.5em}
+  La metodologia discussa si inserisce nel più ampio progetto \textbf{TEXLOS}, 
+  pubblicato sulla rivista scientifica \textit{Frontiers in Artificial Intelligence}.
+  
+  \vspace{1em}
+  \begin{block}{Da Analisi "Post-Mortem" a Controllo Proattivo}
+    L'obiettivo di TEXLOS è fornire uno strumento di \textit{Business Process Management} 
+    avanzato che anticipi l'outcome clinico:
+    \begin{itemize}
+      \item \textbf{Valutazione dei Servizi Esterni (OS):} Studio dell'impatto di esami diagnostici o consulenze esterne sui ritardi del LOS.
+      \item \textbf{Next-Activity-Prediction:} Integrazione della XAI ad alta densità durante la degenza, calcolando gli Integrated Gradients in tempo reale.
+      \item \textbf{Adozione Pratica:} La validazione umana da parte di gruppi di end-user ha confermato l'altissima interpretabilità dell'output generato, fondamentale per l'adozione in corsia.
     \end{itemize}
   \end{block}
 \end{frame}
