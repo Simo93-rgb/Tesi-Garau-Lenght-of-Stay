@@ -149,6 +149,40 @@
 % ── SLIDE 5: Introduzione alla Metodologia ─────────────────
 \section{Metodologia}
 
+% ── SLIDE 5.1: La Pipeline Architetturale ────────────────────
+\begin{frame}{La Pipeline Architetturale}
+  \vspace{2em}
+  \centering
+  \scalebox{0.95}{%
+  \begin{tikzpicture}[
+    node distance=1.5cm and 0.8cm,
+    box/.style={rectangle, draw=primary!80, fill=primary!8!lightbg,
+      thick, minimum height=1.2cm, minimum width=2.4cm,
+      rounded corners=3pt, align=center, font=\normalsize\bfseries},
+    arr/.style={-{Stealth[scale=1.2]}, thick, draw=darktext!70}
+  ]
+  
+  \node[box] (xes) {XES};
+  \node[box, right=of xes] (emb) {Embedding};
+  \node[box, right=of emb] (bert) {BERT};
+  \node[box, right=of bert] (cls) {Classification};
+  \node[box, right=of cls] (ig) {XAI};
+
+  \draw[arr] (xes) -- (emb);
+  \draw[arr] (emb) -- (bert);
+  \draw[arr] (bert) -- (cls);
+  \draw[arr] (cls) -- (ig);
+  
+  \end{tikzpicture}}
+  
+  \vspace{2.5em}
+  \begin{itemize}
+      \item \textbf{XES $\to$ Embedding:} Conversione dei dati clinici grezzi (Event Log) in un formato elaborabile.
+      \item \textbf{BERT $\to$ Classification:} Estrazione bidirezionale di feature complesse e predizione del rischio long-LOS.
+      \item \textbf{XAI:} Interrogazione del modello a posteriori per quantificare l'impatto clinico di ogni azione.
+  \end{itemize}
+\end{frame}
+
 % % ── SLIDE 6: Dataset e Sbilanciamento ────────────────────────
 % \begin{frame}{Dataset e la Sfida dello Sbilanciamento}
 %   \begin{columns}[T]

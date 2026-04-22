@@ -21,6 +21,10 @@ La nostra conclusione è stata chiara: per estendere e superare i limiti delle m
 **Discorso:**
 "Per rispondere a questa esigenza, abbiamo sviluppato una pipeline metodologica innovativa che integra NLP e Deep Learning."
 
+### Slide 5.1: La Pipeline Architetturale
+**Discorso:**
+"Come si può vedere in questo schema riassuntivo, l'intero flusso dei dati si sviluppa attraverso cinque fasi concettuali: partiamo dai log degli eventi ospedalieri in formato XES, li convertiamo con una forma di embedding appropriata e li passiamo al cuore del sistema, un modello Transformer BERT associato a un layer di classificazione binaria. Infine, applichiamo un algoritmo formale di Explainable AI, ovvero gli Integrated Gradients, per ripercorrere a ritroso la decisione e fornire l'interpretazione causale dei colli di bottiglia."
+
 ### Slide 6: Dataset e la Sfida dello Sbilanciamento
 **Discorso:**
 "Abbiamo lavorato su un dataset reale composto da 7.393 casi e oltre 88.000 eventi. L'analisi esplorativa ha subito evidenziato una prima grande sfida: il forte sbilanciamento delle classi. L'89% dei casi appartiene alla classe normale, mentre solo l'11% ricade nel long-LOS. Come mostrano i boxplot, i casi critici presentano una variabilità di eventi molto maggiore. In questo scenario, una funzione di costo standard tenderebbe a far collassare il modello sulla classe maggioritaria."
