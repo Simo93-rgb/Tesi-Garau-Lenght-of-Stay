@@ -8,11 +8,14 @@
 
 ### Slide 3: Il Problema: Length of Stay (LOS)
 **Discorso:**
-"Il punto di partenza è il Length of Stay (LOS), ovvero la durata della degenza ospedaliera, che rappresenta un indicatore critico sia per l'efficienza clinica che per la sostenibilità economica di una struttura. Nel nostro studio, abbiamo identificato una soglia critica: le degenze pari o superiori ai 20 giorni sono classificate come 'long-LOS'. Questi casi generano sovraccarico di letti, aumentano il rischio di infezioni nosocomiali e fanno lievitare i costi."
+"Il punto di partenza è il Length of Stay (LOS), ovvero la durata della degenza ospedaliera. La sua ottimizzazione è una sfida fondamentale per conciliare efficienza economica e qualità delle cure. Nel nostro studio, abbiamo identificato una soglia critica: le degenze pari o superiori ai 20 giorni sono classificate come 'long-LOS'. Questi casi generano sovraccarico di letti e fanno lievitare i costi. 
+Questa tesi, sviluppata all'interno del più ampio progetto TEXLOS, propone un sistema innovativo di intelligenza artificiale per l'individuazione dei colli di bottiglia logistici responsabili di queste degenze prolungate partendo dai log degli eventi.
+L'idea di base che vogliamo trasmettere è quella di addestrare una rete capace di discriminare i pazienti a lunga degenza da quelli normali, per poi aprire questa 'scatola nera' e interrogare a posteriori le sue scelte. Vogliamo capire ed estrarre esattamente quali azioni cliniche hanno portato a questa classificazione."
 
 ### Slide 4: I Limiti dell'Approccio Classico
 **Discorso:**
-"L'approccio classico a questo problema, il Process Mining, mostra dei limiti sui dati clinici reali. Mentre estrae efficacemente grafi deterministici per processi stabili, fatica di fronte all'alta variabilità, al rumore e alle complesse dipendenze temporali tipiche dei percorsi di cura (la cosiddetta coda lunga). La nostra conclusione è stata chiara: serviva un modello in grado di catturare il contesto semantico e bidirezionale di una sequenza clinica."
+"L'approccio classico a questo problema, il Process Mining, mostra però dei limiti sui dati clinici reali. Mentre estrae efficacemente grafi deterministici per processi stabili, fatica di fronte all'alta variabilità, al rumore e alle complesse dipendenze temporali tipiche dei percorsi di cura ospedalieri. 
+La nostra conclusione è stata chiara: per estendere e superare i limiti delle metodologie tradizionali, serviva un approccio capace di catturare il contesto semantico. Per questo motivo abbiamo introdotto il paradigma dello Storytelling, traducendo i log in narrazioni, per alimentare un classificatore Transformer addestrato con Focal Loss per mitigare lo sbilanciamento. Solo così possiamo catturare realmente il significato bidirezionale di una sequenza clinica."
 
 ### Slide 5: Sezione "Metodologia"
 **Discorso:**

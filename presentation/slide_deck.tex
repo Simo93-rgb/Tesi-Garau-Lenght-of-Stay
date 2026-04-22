@@ -104,14 +104,23 @@
 % ── SLIDE 3: Il Problema — LOS ───────────────────────────────
 \begin{frame}{Il Problema: Length of Stay (LOS)}
   \textbf{Cos'è il LOS?}\\
-  La \alert{durata della degenza ospedaliera} è un indicatore
-  critico di efficienza clinica e sostenibilità economica.
+  La \alert{durata della degenza ospedaliera} è una sfida fondamentale per 
+  conciliare efficienza clinica e sostenibilità economica.
 
-  \vspace{1em}
-  \begin{block}{Soglia Critica}
-    Degenze $\ge 20$ giorni classificate come \textbf{long-LOS}:\\
-    sovraccarico di letti, rischio nosocomiale, costi elevati.
+  \vspace{0.5em}
+  \begin{block}{Il Contesto e la Sfida (Progetto TEXLOS)}
+    \begin{itemize}
+      \item \textbf{Soglia Critica:} Degenze $\ge 20$ giorni (long-LOS).
+      \item \textbf{Obiettivo:} Classificazione retrospettiva e individuazione dei 
+            \alert{colli di bottiglia} partendo dai Log degli Eventi.
+    \end{itemize}
   \end{block}
+
+  \vspace{0.5em}
+  \textbf{L'Idea di Base:}\\
+  Addestrare un modello capace di discriminare i pazienti con LOS critico per poi
+  \textbf{interrogare le sue scelte} (tramite Explainable AI), al fine di estrarre 
+  esattamente \alert{quali azioni cliniche} hanno portato a tale classificazione.
 \end{frame}
 
 % ── SLIDE 4: Limiti Process Mining ───────────────────────────
