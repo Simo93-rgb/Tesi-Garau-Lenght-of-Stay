@@ -90,7 +90,7 @@
 \begin{document}
 % ============================================================
 
-% ── SLIDE 1: Frontespizio ────────────────────────────────────
+% ── SLIDE Frontespizio ────────────────────────────────────
 {
   \setbeamertemplate{footline}{}  % niente footer sul titolo
   \begin{frame}[noframenumbering]
@@ -98,10 +98,10 @@
   \end{frame}
 }
 
-% ── SLIDE 2: Introduzione al Caso di Studio ───────────────────────────────
+% ── SLIDE Introduzione al Caso di Studio ───────────────────────────────
 \section{Contesto e Motivazione}
 
-% ── SLIDE 3: Il Problema — LOS ───────────────────────────────
+% ── SLIDE 1: Il Problema — LOS ───────────────────────────────
 \begin{frame}{Il Problema: Length of Stay (LOS)}
   \textbf{Cos'è il LOS?}\\
   La \alert{durata della degenza ospedaliera} è una sfida fondamentale per 
@@ -123,7 +123,7 @@
   esattamente \alert{quali azioni cliniche} hanno portato a tale classificazione.
 \end{frame}
 
-% ── SLIDE 4: Limiti Process Mining ───────────────────────────
+% ── SLIDE 2: Limiti Process Mining ───────────────────────────
 \begin{frame}{I Limiti dell'Approccio Classico}
   \textbf{Process Mining tradizionale:}
   \begin{itemize}
@@ -146,16 +146,16 @@
   il \alert{contesto bidirezionale} di una sequenza.
 \end{frame}
 
-% ── SLIDE 5: Introduzione alla Metodologia ─────────────────
+% ── SLIDE Introduzione alla Metodologia ─────────────────
 \section{Metodologia}
 
-% ── SLIDE 5.1: La Pipeline Architetturale ────────────────────
+% ── SLIDE 3: La Pipeline Architetturale ────────────────────
 \begin{frame}{La Pipeline Architetturale}
   \vspace{2em}
   \centering
-  \scalebox{0.95}{%
+  \scalebox{0.91}{%
   \begin{tikzpicture}[
-    node distance=1.5cm and 0.8cm,
+    node distance=0.8cm and 0.8cm,
     box/.style={rectangle, draw=primary!80, fill=primary!8!lightbg,
       thick, minimum height=1.2cm, minimum width=2.4cm,
       rounded corners=3pt, align=center, font=\normalsize\bfseries},
@@ -183,53 +183,26 @@
   \end{itemize}
 \end{frame}
 
-% % ── SLIDE 6: Dataset e Sbilanciamento ────────────────────────
-% \begin{frame}{Dataset e la Sfida dello Sbilanciamento}
-%   \begin{columns}[T]
-%     \begin{column}{0.50\textwidth}
-%       \begin{block}{EDA — Analisi Esplorativa}
-%         \begin{itemize}
-%           \item \textbf{7.393} casi | \textbf{88.115} eventi
-%           \item Media: \textbf{12.92} azioni/paziente
-%           \item Mediana: 9.00 azioni $\to$ distribuzione \textit{right-skewed}
-%         \end{itemize}
-%       \end{block}
-
-%       \vspace{0.4em}
-%       \textbf{Sbilanciamento di Classe:}
-%       \begin{itemize}
-%         \item Classe 0 (normale): \textbf{6.584} casi — 89\%
-%         \item Classe 1 (LOS $\ge 20$ gg): \alert{\textbf{809}} casi — 11\%
-%       \end{itemize}
-
-%       \vspace{0.4em}
-%       Una Binary Cross Entropy (BCE) standard collassa sulla classe maggioritaria.\\
-%       \textbf{Soluzione: Focal Loss.}
-%     \end{column}
-
-%     \begin{column}{0.47\textwidth}
-%       \centering
-%       \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
-%       {\small\itshape Boxplot della quantità di eventi per classe:\\
-%       i casi di LOS critico presentano variabilità maggiore.}
-%     \end{column}
-%   \end{columns}
-% \end{frame}
-
-% ── SLIDE 9: BERT ─────────────────────────────────────────────
+% ── SLIDE 4: BERT ─────────────────────────────────────────────
 \begin{frame}{Il Modello: L'Architettura BERT}
   \begin{columns}[c]
     \begin{column}{0.48\textwidth}
-      \textbf{Architettura Base:}\\
-      \texttt{bert-base-uncased} (110M parametri) con Classification Head.
-      
-      \vspace{1.5em}
-      \begin{block}{Scelte Architetturali}
-        \begin{itemize}
-          \item \textbf{No ClinicalBERT:} Evitato il \alert{Vocabulary mismatch} causato dalle nomenclature ospedaliere locali.
-          \item \textbf{Setup:} Cross-Validation (5-Fold Stratificata).
-        \end{itemize}
-      \end{block}
+      \vspace{0.5em}
+      \begin{itemize}
+        \item \textbf{Core: Encoder-Only}\\
+              \texttt{bert-base-uncased} (110M parametri).\\
+              Cattura il contesto bidirezionale.
+              
+        \vspace{1.5em}
+        \item \textbf{Adattamento al Task}\\
+              Estrazione feature dal token \texttt{[CLS]}.\\
+              Aggiunta \textbf{Classification Head} dedicata.
+              
+        \vspace{1.5em}
+        \item \textbf{Scelte Architetturali}\\
+              \textbf{No ClinicalBERT:} rischio \alert{Vocabulary mismatch}.\\
+              \textbf{Setup:} 5-Fold Cross Validation.
+      \end{itemize}
     \end{column}
 
     \begin{column}{0.48\textwidth}
@@ -249,10 +222,10 @@
 
       % Definizione dei nodi (Flusso dal basso verso l'alto)
       \node[input] (input) {Input Tokens\\ \small \texttt{[CLS] Token1 Token2 ... [SEP]}};
-      \node[bert, above=of input] (bert) {\textbf{Modello BERT}\\ \small (Transformer Encoder Base)};
+      \node[bert, above=of input] (bert) {\textbf{Modello BERT}\\ \small (Transformer Encoder-Only)};
       \node[cls, above=of bert] (cls) {Rappresentazione \texttt{[CLS]}\\ \small (Vettore contestuale)};
-      \node[head, above=of cls] (classifier) {\textbf{Classification Head}\\ \small (Linear Layer + Dropout)};
-      \node[output, above=of classifier] (output) {Output Binario\\ \small (Sigmoide: Classe 0 / 1)};
+      \node[head, above=of cls] (classifier) {\textbf{Classification Head}\\ \small (Layer Lineare)};
+      \node[output, above=of classifier] (output) {Output Binario\\ \small (Softmax: Classe 0 / 1)};
 
       % Connessioni (Frecce)
       \draw[arrow] (input) -- (bert);
@@ -265,7 +238,7 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 10: Focal Loss ──────────────────────────────────────
+% ── SLIDE 5: Focal Loss ──────────────────────────────────────
 \begin{frame}{Il Modello: La Focal Loss}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
@@ -285,7 +258,7 @@
 \end{frame}
 
 
-% ── SLIDE 7: La Ricerca dell'Embedding Ideale ─────────────────
+% ── SLIDE 6: La Ricerca dell'Embedding Ideale ─────────────────
 \begin{frame}{La Ricerca dell'Embedding Ideale}
   Per interfacciare i log clinici con il Transformer  stato utilizzato un parsificatore custom e infine 
   sono state testate \textbf{tre distinte filosofie di embedding}:
@@ -326,7 +299,7 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 8.1: Da XES a Storytelling ─────────────────────────
+% ── SLIDE 7: Da XES a Storytelling ─────────────────────────
 \begin{frame}{Da Log XES a Narrazione Clinica}
   \vspace{1.5em}
   \centering
@@ -360,7 +333,7 @@
   \end{itemize}
 \end{frame}
 
-% ── SLIDE 8.2: L'Approccio Vincente: Il Paradigma Storytelling ──────────────
+% ── SLIDE 8: L'Approccio Vincente: Il Paradigma Storytelling ──────────────
 \begin{frame}{L'Approccio Vincente: Il Paradigma Storytelling}
   \textbf{L'Intuizione:} tradurre la traccia in un \textbf{testo in linguaggio naturale} massimizza 
   la capacità di BERT di estrarre contesto.
@@ -394,7 +367,7 @@
 
 
 
-% ── SLIDE 10: Risultati Classificazione ───────────────────────
+% ── SLIDE 9: Risultati Classificazione ───────────────────────
 \begin{frame}{Risultati: L'Efficacia di BERT e Storytelling}
   \vspace{0.5em}
   \begin{columns}[T]
@@ -417,7 +390,7 @@
     \end{column}
 
     \begin{column}{0.42\textwidth}
-      \begin{block}{Matrice di Confusione}
+      \begin{block}{Confusion Matrix - Storytelling}
         \centering
         \footnotesize
         \renewcommand{\arraystretch}{1.3}
@@ -445,10 +418,10 @@
   \end{exampleblock}
 \end{frame}
 
-
+% ── SLIDE Sezione Explainable AI ────────────────────────────
 \section{Explainable AI}
 
-% ── SLIDE 11.1: Approccio alla XAI ────────────────────────────
+% ── SLIDE 10: Explainable AI: Oltre l'Attention ────────────────────────────
 \begin{frame}{Explainable AI: Oltre l'Attention}
   I Transformer possiedono nativamente il meccanismo di \textbf{Self-Attention}, che 
   permette teoricamente di "vedere" su quali token il modello si concentra.
@@ -467,6 +440,8 @@
     adottare un algoritmo di spiegabilità matematicamente e clinicamente riconosciuto.
   \end{block}
 \end{frame}
+
+% ── SLIDE 11: Integrated Gradients e la Baseline \texttt{[PAD]}} ────────────────────────────
 \begin{frame}{Integrated Gradients e la Baseline \texttt{[PAD]}}
   \textbf{Intuizione:} misurare il contributo di ogni token
   integrando i gradienti lungo un percorso logico dalla
@@ -487,7 +462,7 @@
   \end{block}
 \end{frame}
 
-% ── SLIDE 13: Aggregazione Sub-Token ─────────────────────────
+% ── SLIDE 12: Aggregazione Sub-Token ─────────────────────────
 \begin{frame}{La Sfida: Aggregazione dei Sub-Token}
   \begin{columns}[c, onlytextwidth]
     \begin{column}{0.52\textwidth}
@@ -562,8 +537,8 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 14: Cruscotto Clinico ★ ────────────────────────────
-\begin{frame}{Il Cruscotto Clinico: Reparto 701 Cardiochirurgia}
+% ── SLIDE 13: Cruscotto Clinico ★ ────────────────────────────
+\begin{frame}{Reparto 701 Cardiochirurgia}
   \textbf{109 pazienti — Ospedale di Alessandria.}
   BERT + IG identificano i \alert{colli di bottiglia processuali}.
 
@@ -597,9 +572,9 @@
   \end{columns}
 \end{frame}
 
-% ── SLIDE 15: Fattibilità Aziendale ─────────────────────────
+% ── SLIDE Sezione Conclusioni ────────────────────────────
 \section{Conclusioni}
-
+% ── SLIDE 14: Fattibilità Aziendale ─────────────────────────
 \begin{frame}{Costi di Deployment}
   \vspace{2em}
   \begin{center}
@@ -621,7 +596,7 @@
   \end{center}
 \end{frame}
 
-% ── SLIDE 16: Conclusioni ─────────────────────────────────────
+% ── SLIDE 15: Conclusioni ─────────────────────────────────────
 \begin{frame}{Conclusioni}
   \vspace{1em}
   \textbf{Risultati e Lezioni Apprese:}
@@ -640,7 +615,7 @@
   \end{alertblock}
 \end{frame}
 
-% ── SLIDE 17.1: Sviluppi Futuri ─────────────────────────────────
+% ── SLIDE 16: Sviluppi Futuri ─────────────────────────────────
 \begin{frame}{Sviluppi Futuri dell'Architettura AI}
   \vspace{1em}
   \begin{block}{Miglioramenti Modellistici e Dati}
@@ -652,7 +627,7 @@
   \end{block}
 \end{frame}
 
-% ── SLIDE 17.2: TEXLOS ──────────────────────────────────────────
+% ── SLIDE 17: TEXLOS ──────────────────────────────────────────
 \begin{frame}{Il Contesto Più Ampio: Il Progetto TEXLOS}
   \vspace{0.5em}
   La metodologia discussa si inserisce nel più ampio progetto \textbf{TEXLOS}, 
@@ -784,6 +759,39 @@
       \centering
       \includegraphics[width=\linewidth]{comparison_with_a_dog.png}
       {\small\itshape Confronto visivo diversi algoritmi di XAI.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE 6: Dataset e Sbilanciamento ────────────────────────
+\begin{frame}{Dataset e la Sfida dello Sbilanciamento}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \begin{block}{EDA — Analisi Esplorativa}
+        \begin{itemize}
+          \item \textbf{7.393} casi | \textbf{88.115} eventi
+          \item Media: \textbf{12.92} azioni/paziente
+          \item Mediana: 9.00 azioni $\to$ distribuzione \textit{right-skewed}
+        \end{itemize}
+      \end{block}
+
+      \vspace{0.4em}
+      \textbf{Sbilanciamento di Classe:}
+      \begin{itemize}
+        \item Classe 0 (normale): \textbf{6.584} casi — 89\%
+        \item Classe 1 (LOS $\ge 20$ gg): \alert{\textbf{809}} casi — 11\%
+      \end{itemize}
+
+      \vspace{0.4em}
+      Una Binary Cross Entropy (BCE) standard collassa sulla classe maggioritaria.\\
+      \textbf{Soluzione: Focal Loss.}
+    \end{column}
+
+    \begin{column}{0.47\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{class_quantity_boxplot.png}
+      {\small\itshape Boxplot della quantità di eventi per classe:\\
+      i casi di LOS critico presentano variabilità maggiore.}
     \end{column}
   \end{columns}
 \end{frame}
