@@ -77,7 +77,7 @@ Come vediamo dal diagramma, il flusso è lineare. All'inizio della sequenza test
 
 ### Slide 15: Il Cruscotto Clinico: Reparto 701 Cardiochirurgia
 **Discorso:**
-"Il risultato finale è visibile in queste mappe di attribuzione su un campione del reparto di Cardiochirurgia. I gradienti aggregati isolano le procedure maggiormente associate allo spreco del LOS. Questo fornisce alla direzione ospedaliera un vero e proprio 'cruscotto' clinico per identificare in modo data-driven i colli di bottiglia del processo."
+"Il risultato finale dell'aggregazione dei gradienti è un istogramma estremamente chiaro e leggibile, che funge da vero e proprio cruscotto manageriale. Come vediamo in questa slide, il sistema ha identificato in modo completamente data-driven le 5 azioni cliniche e servizi esterni che rappresentano i maggiori colli di bottiglia processuali. Questo tipo di output, evidenziando le cause dei ritardi, supporta direttamente la direzione ospedaliera nell'implementazione di strategie organizzative mirate e nell'ottimizzazione del servizio offerto."
 
 ### Slide 16: Sezione "Conclusioni"
 **Discorso:**
@@ -97,7 +97,7 @@ Come vediamo dal diagramma, il flusso è lineare. All'inizio della sequenza test
 
 ### Slide 18.2: Il Contesto Più Ampio: Il Progetto TEXLOS
 **Discorso:**
-"Per concludere, ci tengo a sottolineare che la metodologia discussa in questa tesi non è fine a se stessa, ma è il motore analitico di un progetto molto più ampio chiamato TEXLOS, pubblicato sulla rivista scientifica 'Frontiers in Artificial Intelligence'. L'obiettivo di TEXLOS è fornire un framework di Business Process Management che operi in corso d'opera. Il focus si sposta dall'analisi 'post-mortem' all'anticipazione online, studiando ad esempio l'impatto dei servizi diagnostici esterni e fornendo Next-Activity-Prediction per il controllo proattivo della degenza. E proprio la validazione umana da parte dei medici ha confermato il potenziale di questo strumento.
+"Per concludere, la metodologia discussa si inserisce nel progetto TEXLOS pubblicato sulla rivista scientifica 'Frontiers in Artificial Intelligence'. Come delineato nello studio, l'analisi ha confermato il forte impatto dei servizi organizzativi esterni sul prolungamento del LOS. Poiché l'approccio attuale è puramente predittivo, i futuri sviluppi punteranno al Causal Machine Learning per stabilire formalmente le relazioni di causa-effetto. Inoltre, stiamo pianificando di sfruttare le capacità generative degli LLM per estrarre le narrazioni direttamente dalle lettere di dimissione, bypassando i complessi database ospedalieri. Infine, la nostra validazione preliminare sui medici ha dato risultati molto incoraggianti, confermando il potenziale per un deployment sistematico dello strumento in corsia.
 Grazie a tutti per l'attenzione. Sono a disposizione per le vostre domande."
 
 ***

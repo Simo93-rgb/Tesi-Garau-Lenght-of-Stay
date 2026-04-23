@@ -539,37 +539,14 @@
 
 % ── SLIDE 13: Cruscotto Clinico ★ ────────────────────────────
 \begin{frame}{Reparto 701 Cardiochirurgia}
-  \textbf{109 pazienti — Ospedale di Alessandria.}
-  BERT + IG identificano i \alert{colli di bottiglia processuali}.
+  \textbf{109 pazienti — Ospedale di Alessandria.} BERT + IG identificano i \alert{colli di bottiglia processuali}.
 
-  \vspace{0.3em}
-  \begin{columns}[c]
-    \begin{column}{0.45\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]%
-        {histogram_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]%
-        {heatmap_actions_narrativo_bert-base-uncased_single_20260226_195041.png}
-    \end{column}
-  \end{columns}
+  \begin{center}
+    \includegraphics[width=0.9\linewidth, height=0.55\textheight, keepaspectratio]{top 5 clinical actions time related bottlenecks.png}
+  \end{center}
 
-  \vspace{0.4em}
-  \begin{columns}[T]
-    \begin{column}{0.45\textwidth}
-      \centering
-      {\small\itshape Impatto Clinico: i gradienti aggregati\\
-      isolano le procedure maggiormente\\ associate allo spreco del LOS.}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \centering
-      {\small\itshape Mappa di Attribuzione: l'intensità\\
-      cromatica quantifica il peso decisionale\\
-      nel separare la classe critica dalla normale.}
-    \end{column}
-  \end{columns}
+  \centering
+  {\small\itshape Top 5 azioni cliniche e servizi esterni responsabili dei ritardi processuali.\\ L'istogramma supporta la direzione nell'implementazione di strategie organizzative mirate.\par}
 \end{frame}
 
 % ── SLIDE Sezione Conclusioni ────────────────────────────
@@ -622,7 +599,7 @@
     \begin{itemize}
       \item \textbf{Ampliamento del Dataset:} Integrare log clinici provenienti da altre strutture ospedaliere per incrementare la variabilità statistica e consolidare la generalizzabilità del modello.
       \item \textbf{Modelli Alternativi:} Sperimentare Transformer di nuova generazione (es. RoBERTa o LLM compatti) per catturare pattern semantici ancora più complessi nella narrazione testuale.
-      \item \textbf{Mixture of Experts (MoE):} Sviluppare un \textit{ensemble} di reti specializzate per singolo reparto (es. un esperto per Cardiologia, uno per Ortopedia) per massimizzare l'accuratezza predittiva.
+      \item \textbf{Mixture of Experts (MoE):} Dimensione del dataset permettendo, sviluppare un \textit{ensemble} di reti specializzate per singolo reparto (es. un esperto per Cardiologia, uno per Ortopedia) per massimizzare l'accuratezza predittiva.
     \end{itemize}
   \end{block}
 \end{frame}
@@ -630,17 +607,15 @@
 % ── SLIDE 17: TEXLOS ──────────────────────────────────────────
 \begin{frame}{Il Contesto Più Ampio: Il Progetto TEXLOS}
   \vspace{0.5em}
-  La metodologia discussa si inserisce nel più ampio progetto \textbf{TEXLOS}, 
-  pubblicato sulla rivista scientifica \textit{Frontiers in Artificial Intelligence}.
+  La metodologia si inserisce nel progetto \textbf{TEXLOS}, 
+  pubblicato su \textit{Frontiers in Artificial Intelligence}.
   
   \vspace{1em}
-  \begin{block}{Da Analisi "Post-Mortem" a Controllo Proattivo}
-    L'obiettivo di TEXLOS è fornire uno strumento di \textit{Business Process Management} 
-    avanzato che anticipi l'outcome clinico:
+  \begin{block}{Risultati e Sviluppi Futuri}
     \begin{itemize}
-      \item \textbf{Valutazione dei Servizi Esterni (OS):} Studio dell'impatto di esami diagnostici o consulenze esterne sui ritardi del LOS.
-      \item \textbf{Next-Activity-Prediction:} Integrazione della XAI ad alta densità durante la degenza, calcolando gli Integrated Gradients in tempo reale.
-      \item \textbf{Adozione Pratica:} La validazione umana da parte di gruppi di end-user ha confermato l'altissima interpretabilità dell'output generato, fondamentale per l'adozione in corsia.
+      \item \textbf{Verso la Causalità:} L'attuale framework è predittivo. I futuri sviluppi punteranno al \textit{Causal Machine Learning} per stabilire relazioni causa-effetto formali.
+      \item \textbf{Integrazione LLM e NLP:} Sfruttare modelli generativi per elaborare direttamente le \textbf{lettere di dimissione}, bypassando l'estrazione dai database ospedalieri.
+      \item \textbf{Feedback Medici:} Risultati incoraggianti in termini di comprensibilità e utilità percepita, confermando la possibilità per il deployment in corsia.
     \end{itemize}
   \end{block}
 \end{frame}
